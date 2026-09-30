@@ -115,12 +115,14 @@ export const site = {
       name: "Launch Site",
       priceKey: "website" as const,
       timing: "2–3 weeks",
+      badge: "",
       features: ["Responsive website", "SEO basics", "Analytics setup", "1 month support"],
     },
     {
       name: "MVP",
       priceKey: "mvp" as const,
       timing: "4–6 weeks",
+      badge: "",
       features: ["Product design", "Full-stack build", "Auth + database", "Launch support"],
     },
     {

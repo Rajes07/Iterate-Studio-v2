@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useRef, useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent, type ReactNode } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -268,7 +268,7 @@ function WorkSection() {
   );
 }
 
-const processIcons = [MousePointer2, Code2, Send, BarChart3];
+const processIcons = [MousePointer2, Code2, Send, BarChart3] as const;
 function ProcessSection() {
   return (
     <section id="process" className="section-pad scroll-mt-20 bg-card">
@@ -276,7 +276,7 @@ function ProcessSection() {
         <SectionHeading eyebrow="How we work" title="A faster way to design and build your product" body="Clear steps, weekly progress and one accountable team from first idea to what comes next." />
         <div className="mt-12 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {site.process.map((step, index) => {
-            const Icon = processIcons[index];
+            const Icon = processIcons[index] ?? MousePointer2;
             return <article key={step.title} className="process-card reveal">
               <div className="mb-12 flex items-center justify-between"><span className="eyebrow">Step 0{index + 1}</span><span className="icon-tile"><Icon /></span></div>
               <div className="process-visual" aria-hidden="true"><span /><span /><span /><i /></div>
@@ -302,9 +302,10 @@ function BentoSection() {
 }
 
 function ServiceVisual({ index }: { index: number }) {
+  const visual = ["ocean", "lime", "violet"][Math.floor(index / 2)] ?? "ocean";
   return (
     <div className={cn("service-visual", `service-visual-${index + 1}`)} aria-hidden="true">
-      {index % 2 === 0 ? <MockScreen variant={["ocean", "lime", "violet"][index / 2]} /> : <div className="service-phone"><div className="service-phone-top" /><span /><span /><div className="service-phone-chart" /><span /></div>}
+      {index % 2 === 0 ? <MockScreen variant={visual} /> : <div className="service-phone"><div className="service-phone-top" /><span /><span /><div className="service-phone-chart" /><span /></div>}
       <div className="service-badge"><Sparkles /><span>Designed to ship</span></div>
     </div>
   );
@@ -326,8 +327,9 @@ function ServicesSection() {
 }
 
 function GalleryTile({ item, index }: { item: (typeof site.gallery)[number]; index: number }) {
+  const visual = item.visual ?? "ocean";
   return <article className={cn("gallery-tile", `gallery-${item.visual}`)} aria-label={item.title}>
-    {item.image ? <img src={item.image} alt={item.title} /> : <MockScreen variant={item.visual} compact />}
+    {item.image ? <img src={item.image} alt={item.title} /> : <MockScreen variant={visual} compact />}
     <span>{item.title}</span><small>0{(index % 8) + 1}</small>
   </article>;
 }
@@ -379,10 +381,10 @@ function ContactSection() {
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); const form = new FormData(event.currentTarget); const nextErrors: Record<string, string> = {};
     const name = String(form.get("name") ?? "").trim(); const email = String(form.get("email") ?? "").trim(); const project = String(form.get("project") ?? "").trim();
-    if (!name) nextErrors.name = "Please enter your full name."; else if (name.length > 100) nextErrors.name = "Please keep your name under 100 characters.";
-    if (!email) nextErrors.email = "Please enter your email."; else if (!/^\S+@\S+\.\S+$/.test(email) || email.length > 255) nextErrors.email = "Please enter a valid email.";
-    if (!project) nextErrors.project = "Tell us briefly what you are building."; else if (project.length > 500) nextErrors.project = "Please keep this under 500 characters.";
-    if (!budget) nextErrors.budget = "Please choose a budget range."; if (!source) nextErrors.source = "Please tell us how you found us.";
+    if (!name) nextErrors["name"] = "Please enter your full name."; else if (name.length > 100) nextErrors["name"] = "Please keep your name under 100 characters.";
+    if (!email) nextErrors["email"] = "Please enter your email."; else if (!/^\S+@\S+\.\S+$/.test(email) || email.length > 255) nextErrors["email"] = "Please enter a valid email.";
+    if (!project) nextErrors["project"] = "Tell us briefly what you are building."; else if (project.length > 500) nextErrors["project"] = "Please keep this under 500 characters.";
+    if (!budget) nextErrors["budget"] = "Please choose a budget range."; if (!source) nextErrors["source"] = "Please tell us how you found us.";
     setErrors(nextErrors); if (Object.keys(nextErrors).length === 0) setSubmitted(true);
   }
   const toggleNeed = (need: string) => setNeeds((current) => current.includes(need) ? current.filter((item) => item !== need) : [...current, need]);
@@ -390,9 +392,9 @@ function ContactSection() {
     {submitted ? <div className="success-state" role="status"><span className="success-icon"><Check /></span><p className="eyebrow">Message received</p><h2>{site.form.success}</h2><p>We&apos;ve got everything we need for now. Keep an eye on your inbox.</p><Button variant="outline" className="mt-7 rounded-full" onClick={() => setSubmitted(false)}>Send another enquiry</Button></div> : <div className="grid gap-12 lg:grid-cols-[.72fr_1.28fr] lg:gap-20">
       <div><p className="eyebrow">Start a conversation</p><h2 className="mt-4 text-4xl font-bold sm:text-5xl">Book a free discovery call</h2><p className="mt-5 leading-7 text-muted-foreground">Tell us what you&apos;re making and where you need help. We&apos;ll reply with useful next steps within two business days.</p><div className="mt-10 rounded-2xl bg-muted p-5"><p className="text-sm text-muted-foreground">Prefer email instead?</p><a href={`mailto:${site.contact.email}`} className="mt-1 inline-block font-semibold hover:text-primary">{site.contact.email}</a></div></div>
       <form onSubmit={submit} noValidate className="grid gap-5">
-        <div className="grid gap-5 sm:grid-cols-2"><Field label="Full Name*" error={errors.name}><Input name="name" maxLength={100} placeholder="Your full name" aria-invalid={Boolean(errors.name)} /></Field><Field label="Email*" error={errors.email}><Input name="email" type="email" maxLength={255} placeholder="you@company.com" aria-invalid={Boolean(errors.email)} /></Field></div>
-        <Field label="What are you building?*" error={errors.project}><textarea name="project" maxLength={500} rows={4} placeholder="A short description of your idea, product or business" aria-invalid={Boolean(errors.project)} className="form-control min-h-28 resize-y" /></Field>
-        <div className="grid gap-5 sm:grid-cols-2"><Field label="Project budget*" error={errors.budget}><Select value={budget} onValueChange={setBudget}><SelectTrigger className="form-control"><SelectValue placeholder="Select a range" /></SelectTrigger><SelectContent>{site.form.budgets.map((option) => <SelectItem key={option} value={option}>{option}</SelectItem>)}</SelectContent></Select></Field><Field label="How did you find us?*" error={errors.source}><Select value={source} onValueChange={setSource}><SelectTrigger className="form-control"><SelectValue placeholder="Select one" /></SelectTrigger><SelectContent>{site.form.sources.map((option) => <SelectItem key={option} value={option}>{option}</SelectItem>)}</SelectContent></Select></Field></div>
+        <div className="grid gap-5 sm:grid-cols-2"><Field label="Full Name*" error={errors["name"]}><Input name="name" maxLength={100} placeholder="Your full name" aria-invalid={Boolean(errors["name"])} /></Field><Field label="Email*" error={errors["email"]}><Input name="email" type="email" maxLength={255} placeholder="you@company.com" aria-invalid={Boolean(errors["email"])} /></Field></div>
+        <Field label="What are you building?*" error={errors["project"]}><textarea name="project" maxLength={500} rows={4} placeholder="A short description of your idea, product or business" aria-invalid={Boolean(errors["project"])} className="form-control min-h-28 resize-y" /></Field>
+        <div className="grid gap-5 sm:grid-cols-2"><Field label="Project budget*" error={errors["budget"]}><Select value={budget} onValueChange={setBudget}><SelectTrigger className="form-control"><SelectValue placeholder="Select a range" /></SelectTrigger><SelectContent>{site.form.budgets.map((option) => <SelectItem key={option} value={option}>{option}</SelectItem>)}</SelectContent></Select></Field><Field label="How did you find us?*" error={errors["source"]}><Select value={source} onValueChange={setSource}><SelectTrigger className="form-control"><SelectValue placeholder="Select one" /></SelectTrigger><SelectContent>{site.form.sources.map((option) => <SelectItem key={option} value={option}>{option}</SelectItem>)}</SelectContent></Select></Field></div>
         <fieldset><legend className="mb-3 text-sm font-semibold">What do you need help with?</legend><div className="flex flex-wrap gap-2">{site.form.needs.map((need) => <Button key={need} type="button" variant={needs.includes(need) ? "default" : "outline"} className="h-10 rounded-full px-4" onClick={() => toggleNeed(need)} aria-pressed={needs.includes(need)}>{needs.includes(need) && <Check />}{need}</Button>)}</div></fieldset>
         <Button type="submit" className="mt-2 h-13 rounded-full px-7 sm:w-fit">Send enquiry <ArrowUpRight /></Button>
       </form>
@@ -400,7 +402,7 @@ function ContactSection() {
   </div></div></section>;
 }
 
-function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+function Field({ label, error, children }: { label: string; error: string | undefined; children: ReactNode }) {
   return <div className="grid gap-2"><Label className="font-semibold">{label}</Label>{children}{error && <p className="text-sm text-destructive" role="alert">{error}</p>}</div>;
 }
 
