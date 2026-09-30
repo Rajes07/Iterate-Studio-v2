@@ -33,7 +33,7 @@ button, a, input, textarea { letter-spacing: 0; }
 .trust-chip, .status-pill, .timing-pill { display: inline-flex; align-items: center; gap: .45rem; border: 1px solid var(--border); border-radius: 999px; background: color-mix(in oklab, var(--card) 76%, transparent); padding: .45rem .75rem; font-size: .72rem; font-weight: 600; color: var(--muted-foreground); }
 .avatar-dot { display: grid; width: 2rem; height: 2rem; place-items: center; border: 2px solid var(--background); border-radius: 50%; background: var(--card); color: var(--primary); font-size: .7rem; font-weight: 800; box-shadow: var(--shadow-soft); }
 .avatar-dot svg { width: .8rem; }
-.hero-section { min-height: calc(100svh - 70px); display: grid; align-items: center; }
+.hero-section { display: grid; align-items: center; }
 .hero-visual { position: relative; min-height: 510px; border: 1px solid color-mix(in oklab, var(--primary) 15%, var(--border)); border-radius: 1.5rem; overflow: hidden; background: linear-gradient(145deg, oklch(.91 .055 253), oklch(.96 .025 285) 50%, oklch(.9 .07 175)); box-shadow: var(--shadow-soft); }
 .hero-orbit { position: absolute; border: 1px solid oklch(1 0 0 / 55%); border-radius: 50%; }
 .hero-orbit-one { width: 420px; height: 420px; right: -120px; top: -130px; }.hero-orbit-two { width: 280px; height: 280px; left: -100px; bottom: -100px; }

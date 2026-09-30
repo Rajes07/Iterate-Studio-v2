@@ -10,6 +10,7 @@ import {
   CircleCheck,
   Code2,
   Layers3,
+  MapPin,
   Menu,
   MessageCircle,
   MousePointer2,
@@ -187,7 +188,7 @@ function Hero() {
       <div className="site-container grid items-center gap-14 pb-16 pt-12 lg:grid-cols-[1.03fr_.97fr] lg:pb-24 lg:pt-20">
         <div className="reveal">
           <div className="mb-6 flex flex-wrap gap-2">
-            {site.hero.chips.map((chip) => <span key={chip} className="trust-chip">{chip}</span>)}
+            {site.hero.chips.map((chip, index) => <span key={chip} className="trust-chip">{index === 0 && <MapPin className="h-3 w-3 text-primary" />}{chip.replace("📍 ", "")}</span>)}
           </div>
           <h1 className="hero-title">{site.hero.title}</h1>
           <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">{site.hero.description}</p>
