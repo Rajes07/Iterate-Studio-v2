@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep all user-editable site copy, links, pricing, services, projects, FAQs, and gallery entries in `src/content/site.ts` so content changes stay centralized.
