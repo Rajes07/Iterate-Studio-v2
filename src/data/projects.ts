@@ -25,6 +25,8 @@ export type Project = {
   category: string;
   tagline: string;
   thumbnail: string;
+  /** Card background gradient, text tone, and which device frame wraps the screenshot. */
+  card: { colors: [string, string]; ink: "light" | "dark"; device: "laptop" | "phone" };
   type: "external" | "internal";
   url?: string;
   content?: ProjectContent;
@@ -44,6 +46,7 @@ export const projects: Project[] = [
     category: "Website",
     tagline: "A destination and study-abroad guidance website.",
     thumbnail: "/work/nextshore.webp",
+    card: { colors: ["#0b1f3a", "#b08a3c"], ink: "light", device: "phone" },
     type: "external",
     url: "https://nextshore-six.vercel.app/",
   },
@@ -53,6 +56,7 @@ export const projects: Project[] = [
     category: "Website",
     tagline: "A garden design studio website for homes in Tamil Nadu.",
     thumbnail: "/work/vanascape.webp",
+    card: { colors: ["#24432f", "#9bb07a"], ink: "light", device: "phone" },
     type: "external",
     url: "https://vanascape-garden-studio--mrajes466.replit.app/",
   },
@@ -62,6 +66,7 @@ export const projects: Project[] = [
     category: "Mobility app · Concept",
     tagline: "Electric scooter rental by the minute. Scan, ride, park.",
     thumbnail: "/work/volt-ride.webp",
+    card: { colors: ["#0a0a0a", "#2e5bff"], ink: "light", device: "laptop" },
     type: "internal",
     content: {
       hero: {
@@ -104,6 +109,7 @@ export const projects: Project[] = [
     category: "Coworking · Concept",
     tagline: "A coworking space with bookable desks and a live floor plan.",
     thumbnail: "/work/nomad-desk.webp",
+    card: { colors: ["#ffb996", "#ece6dc"], ink: "dark", device: "laptop" },
     type: "internal",
     content: {
       hero: {
@@ -146,6 +152,7 @@ export const projects: Project[] = [
     category: "Pet care · Concept",
     tagline: "Dog grooming and daycare with one-tap booking.",
     thumbnail: "/work/paw-and-co.webp",
+    card: { colors: ["#ffc9b5", "#fff1e6"], ink: "dark", device: "laptop" },
     type: "internal",
     content: {
       hero: {
@@ -188,6 +195,7 @@ export const projects: Project[] = [
     category: "Healthcare · Concept",
     tagline: "A calm dental clinic with online appointment booking.",
     thumbnail: "/work/smile-studio.webp",
+    card: { colors: ["#0f4c47", "#58a89c"], ink: "light", device: "laptop" },
     type: "internal",
     content: {
       hero: {
@@ -230,6 +238,7 @@ export const projects: Project[] = [
     category: "Food delivery · Concept",
     tagline: "Home-cooked lunch subscriptions, delivered at 1 PM.",
     thumbnail: "/work/tiffin-tales.webp",
+    card: { colors: ["#2f6b2f", "#d9b84a"], ink: "light", device: "laptop" },
     type: "internal",
     content: {
       hero: {

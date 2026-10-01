@@ -1,68 +1,111 @@
-import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { projects, type Project } from "@/data/projects";
 import { Button } from "@/components/ui/button";
 import { gsap, getLenis, registerGsap, ScrollTrigger } from "@/lib/motion";
 
 const N = projects.length;
-const STEP = 470; // px between card centres on the arc
+const clampP = gsap.utils.clamp(0, N - 1);
 const ARC_QUERY = "(min-width: 768px) and (prefers-reduced-motion: no-preference)";
+const WHEEL_QUERY = "(max-width: 767px) and (prefers-reduced-motion: no-preference)";
+const ARC_STEP = 345; // px between card centres on the desktop arc
+const WHEEL_ANGLE = 50; // degrees between cards on the mobile wheel
 
-function WorkCard({ project, onClick, tabIndex }: { project: Project; onClick?: (e: MouseEvent<HTMLAnchorElement>) => void; tabIndex?: number }) {
+/** Coloured portrait card: badge, title, tagline and a device mockup inside the box. */
+function WorkCard({ project, onClick }: { project: Project; onClick?: (e: MouseEvent<HTMLAnchorElement>) => void }) {
   const external = project.type === "external";
+  const { colors, ink, device } = project.card;
+  const style = { "--c1": colors[0], "--c2": colors[1] } as CSSProperties;
   const body = (
     <>
-      <div className="work-image">
-        <img src={project.thumbnail} alt={`${project.name} preview`} width={900} height={560} loading="lazy" decoding="async" draggable={false} />
-        <span className="status-pill"><i className={external ? "status-live" : "status-concept"} />{external ? "Live ↗" : "Case study"}</span>
+      <span className="work-badge"><i className={external ? "status-live" : "status-concept"} />{external ? "Live ↗" : "Case study"}</span>
+      <h3 className="work-title">{project.name}</h3>
+      <p className="work-tagline">{project.tagline}</p>
+      <div className={`work-device ${device}`}>
+        <img src={project.thumbnail} alt={`${project.name} preview`} width={900} height={device === "phone" ? 1760 : 560} loading="lazy" decoding="async" draggable={false} />
       </div>
-      <div className="work-info">
-        <div className="min-w-0">
-          <h3 className="truncate text-xl font-semibold">{project.name}</h3>
-          <p className="mt-1 truncate text-sm text-muted-foreground">{project.tagline}</p>
-        </div>
-        <span className="work-arrow" aria-hidden="true"><ArrowRight /></span>
-      </div>
+      <span className="work-view">View {external ? "site" : "case study"} <ArrowRight /></span>
     </>
   );
+  const cls = `work-card group ink-${ink}`;
   return external ? (
-    <a href={project.url} target="_blank" rel="noopener noreferrer" draggable={false} tabIndex={tabIndex} onClick={onClick} className="work-card group">{body}</a>
+    <a href={project.url} target="_blank" rel="noopener noreferrer" draggable={false} onClick={onClick} className={cls} style={style}>{body}</a>
   ) : (
-    <Link to="/work/$slug" params={{ slug: project.slug }} draggable={false} tabIndex={tabIndex} onClick={onClick} className="work-card group">{body}</Link>
+    <Link to="/work/$slug" params={{ slug: project.slug }} draggable={false} onClick={onClick} className={cls} style={style}>{body}</Link>
   );
+}
+
+/** Horizontal drag that scrubs a progress value (in card units) and flings with inertia. */
+function attachDrag(el: HTMLElement, o: { unit: number; get: () => number; set: (p: number) => void; end: (target: number) => void; moved: { current: boolean }; onActive?: (on: boolean) => void }) {
+  let startX = 0, startY = 0, startP = 0, lastX = 0, lastT = 0, vel = 0, down = false, lock: "x" | "y" | null = null;
+  const onDown = (e: PointerEvent) => {
+    if (e.button !== 0) return;
+    down = true; lock = null; o.moved.current = false;
+    startX = lastX = e.clientX; startY = e.clientY; startP = o.get(); lastT = performance.now(); vel = 0;
+  };
+  const onMove = (e: PointerEvent) => {
+    if (!down) return;
+    const dx = e.clientX - startX, dy = e.clientY - startY;
+    if (!lock && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) lock = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+    if (lock !== "x") return;
+    if (!o.moved.current) { o.moved.current = true; el.setPointerCapture(e.pointerId); o.onActive?.(true); }
+    const now = performance.now();
+    vel = ((lastX - e.clientX) / o.unit) / Math.max(1, now - lastT) * 1000;
+    lastX = e.clientX; lastT = now;
+    o.set(startP - dx / o.unit);
+  };
+  const onUp = () => {
+    if (!down) return;
+    down = false;
+    if (o.moved.current) { o.onActive?.(false); o.end(Math.round(o.get() + gsap.utils.clamp(-2, 2, vel * 0.25))); setTimeout(() => { o.moved.current = false; }, 0); }
+  };
+  el.addEventListener("pointerdown", onDown);
+  window.addEventListener("pointermove", onMove);
+  window.addEventListener("pointerup", onUp);
+  window.addEventListener("pointercancel", onUp);
+  return () => {
+    el.removeEventListener("pointerdown", onDown);
+    window.removeEventListener("pointermove", onMove);
+    window.removeEventListener("pointerup", onUp);
+    window.removeEventListener("pointercancel", onUp);
+  };
 }
 
 export function WorkSection() {
   const section = useRef<HTMLElement>(null);
-  const stage = useRef<HTMLDivElement>(null);
+  const arc = useRef<HTMLDivElement>(null);
+  const wheel = useRef<HTMLDivElement>(null);
   const cursor = useRef<HTMLDivElement>(null);
-  const swipe = useRef<HTMLDivElement>(null);
   const goTo = useRef<(index: number) => void>(() => {});
   const moved = useRef(false);
+  const current = useRef(0);
   const [active, setActive] = useState(0);
 
-  // Desktop: pinned 3D arc driven by scroll (scrub), also draggable.
+  const sync = (p: number) => { const i = Math.round(clampP(p)); current.current = i; setActive(i); };
+
+  // Desktop (≥768px): pinned 3D arc scrubbed by scroll, also draggable.
   useEffect(() => {
     registerGsap();
     const mm = gsap.matchMedia();
     mm.add(ARC_QUERY, () => {
-      const cards = gsap.utils.toArray<HTMLElement>(".work-arc-card", stage.current ?? undefined);
+      const el = arc.current!;
+      const cards = gsap.utils.toArray<HTMLElement>(".work-arc-card", el);
       const render = (p: number) => {
         cards.forEach((card, i) => {
           const d = i - p, a = Math.abs(d), side = Math.min(a, 1);
           gsap.set(card, {
-            x: d * STEP,
+            x: d * ARC_STEP,
             y: Math.min(a * a, 6) * 12,
             z: -Math.min(a, 2) * 110,
             rotateY: -Math.sign(d) * 12 * side,
             scale: 1 - 0.15 * side,
-            opacity: a <= 1 ? 1 - 0.4 * a : Math.max(0, 0.6 - 0.35 * (a - 1) * 1.4),
+            opacity: a <= 1 ? 1 - 0.4 * a : Math.max(0, 0.6 - 0.49 * (a - 1)),
             zIndex: Math.round(100 - a * 10),
             pointerEvents: a > 2.6 ? "none" : "auto",
           });
         });
-        setActive(Math.round(Math.min(N - 1, Math.max(0, p))));
+        sync(p);
       };
       render(0);
 
@@ -77,53 +120,23 @@ export function WorkSection() {
         snap: { snapTo: 1 / (N - 1), duration: { min: 0.2, max: 0.5 }, delay: 0.08, ease: "power2.out" },
         onUpdate: (self) => render(self.progress * (N - 1)),
       });
-
       const progress = () => st.progress * (N - 1);
       const scrollToP = (p: number) => {
-        const y = st.start + (gsap.utils.clamp(0, N - 1, p) / (N - 1)) * (st.end - st.start);
+        const y = st.start + (clampP(p) / (N - 1)) * (st.end - st.start);
         const lenis = getLenis();
         if (lenis) lenis.scrollTo(y, { immediate: true, force: true }); else window.scrollTo(0, y);
       };
       const proxy = { p: 0 };
       goTo.current = (index) => {
         proxy.p = progress();
-        gsap.to(proxy, { p: gsap.utils.clamp(0, N - 1, index), duration: 0.8, ease: "power3.out", overwrite: true, onUpdate: () => scrollToP(proxy.p) });
+        gsap.to(proxy, { p: clampP(index), duration: 0.8, ease: "power3.out", overwrite: true, onUpdate: () => scrollToP(proxy.p) });
       };
-
-      // Drag with inertia: pointer movement scrubs the same progress value.
-      const el = stage.current!;
-      let startX = 0, startP = 0, lastX = 0, lastT = 0, vel = 0, down = false;
-      const onDown = (e: PointerEvent) => {
-        if (e.button !== 0) return;
-        down = true; moved.current = false; gsap.killTweensOf(proxy);
-        startX = lastX = e.clientX; startP = progress(); lastT = performance.now(); vel = 0;
-        gsap.to(cursor.current, { scale: 0.8, duration: 0.2 });
-      };
-      const onMove = (e: PointerEvent) => {
-        if (!down) return;
-        const dx = e.clientX - startX;
-        if (Math.abs(dx) > 5) moved.current = true;
-        const now = performance.now();
-        vel = (lastX - e.clientX) / STEP / Math.max(1, now - lastT) * 1000;
-        lastX = e.clientX; lastT = now;
-        if (moved.current) { el.setPointerCapture(e.pointerId); scrollToP(startP - dx / STEP); }
-      };
-      const onUp = () => {
-        if (!down) return;
-        down = false;
-        gsap.to(cursor.current, { scale: 1, duration: 0.2 });
-        if (moved.current) { goTo.current(Math.round(progress() + gsap.utils.clamp(-2, 2, vel * 0.25))); setTimeout(() => { moved.current = false; }, 0); }
-      };
-      el.addEventListener("pointerdown", onDown);
-      window.addEventListener("pointermove", onMove);
-      window.addEventListener("pointerup", onUp);
-      window.addEventListener("pointercancel", onUp);
+      const offDrag = attachDrag(el, { unit: ARC_STEP, get: progress, set: scrollToP, end: (t) => goTo.current(t), moved, onActive: (on) => gsap.to(cursor.current, { scale: on ? 0.8 : 1, duration: 0.2 }) });
 
       // "DRAG" cursor pill (fine pointers only)
       const pill = cursor.current;
-      const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
       let offPill = () => {};
-      if (fine && pill) {
+      if (pill && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
         const qx = gsap.quickTo(pill, "x", { duration: 0.35, ease: "power3" });
         const qy = gsap.quickTo(pill, "y", { duration: 0.35, ease: "power3" });
         const mv = (e: PointerEvent) => { qx(e.clientX); qy(e.clientY); };
@@ -133,52 +146,41 @@ export function WorkSection() {
         el.classList.add("has-drag-cursor");
         offPill = () => { el.removeEventListener("pointermove", mv); el.removeEventListener("pointerenter", en); el.removeEventListener("pointerleave", lv); el.classList.remove("has-drag-cursor"); };
       }
+      return () => { offDrag(); offPill(); gsap.killTweensOf(proxy); st.kill(); gsap.set(cards, { clearProps: "all" }); };
+    });
 
-      return () => {
-        el.removeEventListener("pointerdown", onDown);
-        window.removeEventListener("pointermove", onMove);
-        window.removeEventListener("pointerup", onUp);
-        window.removeEventListener("pointercancel", onUp);
-        offPill();
-        gsap.killTweensOf(proxy);
-        st.kill();
-        gsap.set(cards, { clearProps: "all" });
+    // Mobile (<768px): 3D wheel you swipe sideways; vertical scrolling stays native.
+    mm.add(WHEEL_QUERY, () => {
+      const el = wheel.current!;
+      const cards = gsap.utils.toArray<HTMLElement>(".work-wheel-card", el);
+      const R = () => cards[0]!.offsetWidth / (2 * Math.tan((WHEEL_ANGLE / 2) * Math.PI / 180)) * 1.08;
+      let wp = 0, radius = R();
+      const render = (p: number) => {
+        wp = clampP(p);
+        el.style.transform = `translateZ(${-radius}px)`;
+        cards.forEach((card, i) => {
+          const d = i - wp, a = Math.abs(d);
+          card.style.transform = `rotateY(${d * WHEEL_ANGLE}deg) translateZ(${radius}px)`;
+          card.style.opacity = String(a > 1.6 ? 0 : 1 - Math.min(a, 1) * 0.35);
+          card.style.zIndex = String(Math.round(100 - a * 10));
+          card.style.pointerEvents = a < 0.5 ? "auto" : "none";
+        });
+        sync(wp);
       };
+      render(0);
+      const proxy = { p: 0 };
+      goTo.current = (index) => { proxy.p = wp; gsap.to(proxy, { p: clampP(index), duration: 0.7, ease: "power3.out", overwrite: true, onUpdate: () => render(proxy.p) }); };
+      const offDrag = attachDrag(el.parentElement!, { unit: cards[0]!.offsetWidth * 0.8, get: () => wp, set: render, end: (t) => goTo.current(t), moved, onActive: () => gsap.killTweensOf(proxy) });
+      const onResize = () => { radius = R(); render(wp); };
+      window.addEventListener("resize", onResize);
+      return () => { offDrag(); window.removeEventListener("resize", onResize); gsap.killTweensOf(proxy); el.removeAttribute("style"); cards.forEach((c) => c.removeAttribute("style")); };
     });
     return () => mm.revert();
   }, []);
 
-  // Mobile: native scroll-snap carousel; centre card scales to 1, neighbours 0.92.
-  useEffect(() => {
-    const track = swipe.current;
-    if (!track) return;
-    const cards = Array.from(track.children) as HTMLElement[];
-    let raf = 0;
-    const update = () => {
-      raf = 0;
-      const mid = track.scrollLeft + track.clientWidth / 2;
-      let best = 0, bestD = Infinity;
-      cards.forEach((c, i) => {
-        const dist = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid);
-        if (dist < bestD) { bestD = dist; best = i; }
-        c.style.transform = `scale(${1 - 0.08 * Math.min(1, dist / (c.offsetWidth + 12))})`;
-      });
-      setActive(best);
-    };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
-    track.addEventListener("scroll", onScroll, { passive: true });
-    update();
-    return () => { track.removeEventListener("scroll", onScroll); if (raf) cancelAnimationFrame(raf); };
-  }, []);
-
-  const swipeTo = (i: number) => {
-    const c = swipe.current?.children[i] as HTMLElement | undefined;
-    if (c && swipe.current) swipe.current.scrollTo({ left: c.offsetLeft - (swipe.current.clientWidth - c.offsetWidth) / 2, behavior: "smooth" });
-  };
-
-  const arcClick = (i: number) => (e: MouseEvent<HTMLAnchorElement>) => {
+  const cardClick = (i: number) => (e: MouseEvent<HTMLAnchorElement>) => {
     if (moved.current) { e.preventDefault(); return; }
-    if (i !== active) { e.preventDefault(); goTo.current(i); }
+    if (i !== current.current) { e.preventDefault(); goTo.current(i); }
   };
 
   return (
@@ -191,28 +193,26 @@ export function WorkSection() {
             <p>Live sites and concept case studies, from first sketch to polished interface.</p>
           </div>
           <div className="work-arrows hidden gap-2 md:flex">
-            <Button variant="outline" size="icon" className="carousel-arrow" onClick={() => goTo.current(active - 1)} aria-label="Previous project"><ArrowLeft /></Button>
-            <Button variant="outline" size="icon" className="carousel-arrow" onClick={() => goTo.current(active + 1)} aria-label="Next project"><ArrowRight /></Button>
+            <Button variant="outline" size="icon" className="carousel-arrow" onClick={() => goTo.current(current.current - 1)} aria-label="Previous project"><ArrowLeft /></Button>
+            <Button variant="outline" size="icon" className="carousel-arrow" onClick={() => goTo.current(current.current + 1)} aria-label="Next project"><ArrowRight /></Button>
           </div>
         </div>
       </div>
 
       {/* Desktop: 3D arc */}
-      <div ref={stage} className="work-arc" aria-roledescription="carousel" aria-label="Projects">
-        {projects.map((p, i) => (
-          <div key={p.slug} className="work-arc-card"><WorkCard project={p} onClick={arcClick(i)} /></div>
-        ))}
+      <div ref={arc} className="work-arc" aria-roledescription="carousel" aria-label="Projects">
+        {projects.map((p, i) => <div key={p.slug} className="work-arc-card"><WorkCard project={p} onClick={cardClick(i)} /></div>)}
       </div>
       <p className="work-count" aria-hidden="true">{String(active + 1).padStart(2, "0")} <span>/ {String(N).padStart(2, "0")}</span></p>
 
-      {/* Mobile: swipe carousel with dots */}
-      <div className="work-swipe-wrap">
-        <div ref={swipe} className="work-swipe" aria-label="Projects">
-          {projects.map((p) => <div key={p.slug} className="work-swipe-card"><WorkCard project={p} /></div>)}
+      {/* Mobile: swipeable 3D wheel */}
+      <div className="work-wheel-wrap" aria-roledescription="carousel" aria-label="Projects">
+        <div ref={wheel} className="work-wheel">
+          {projects.map((p, i) => <div key={p.slug} className="work-wheel-card"><WorkCard project={p} onClick={cardClick(i)} /></div>)}
         </div>
-        <div className="work-dots" role="tablist" aria-label="Choose project">
-          {projects.map((p, i) => <button key={p.slug} role="tab" aria-selected={active === i} aria-label={p.name} className={active === i ? "on" : undefined} onClick={() => swipeTo(i)} />)}
-        </div>
+      </div>
+      <div className="work-dots" role="tablist" aria-label="Choose project">
+        {projects.map((p, i) => <button key={p.slug} role="tab" aria-selected={active === i} aria-label={p.name} className={active === i ? "on" : undefined} onClick={() => goTo.current(i)} />)}
       </div>
 
       {/* Reduced motion: static grid */}
