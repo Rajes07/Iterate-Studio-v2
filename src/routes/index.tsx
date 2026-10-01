@@ -1,19 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
 import {
-  ArrowLeft,
   ArrowRight,
   ArrowUpRight,
-  BarChart3,
   Check,
   ChevronRight,
   CircleCheck,
-  Code2,
-  Layers3,
-  MapPin,
   Menu,
   MessageCircle,
-  MousePointer2,
   Send,
   SlidersHorizontal,
   Sparkles,
@@ -47,6 +41,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { useSmoothScroll } from "@/lib/motion";
+import { ServicesSection } from "@/components/sections/services";
+import { ProcessSection } from "@/components/sections/process";
+import { WorkSection } from "@/components/sections/work";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -187,34 +185,17 @@ function Hero() {
     <section id="top" className="hero-section overflow-hidden">
       <div className="site-container grid items-center gap-14 pb-16 pt-12 lg:grid-cols-[1.03fr_.97fr] lg:pb-24 lg:pt-20">
         <div className="reveal">
-          <div className="mb-6 flex flex-wrap gap-2">
-            {site.hero.chips.map((chip, index) => <span key={chip} className="trust-chip">{index === 0 && <MapPin className="h-3 w-3 text-primary" />}{chip.replace("📍 ", "")}</span>)}
-          </div>
           <h1 className="hero-title">{site.hero.title}</h1>
           <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">{site.hero.description}</p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button className={anchorButton} asChild><a href={site.contact.bookingUrl}>Book a free 30-min call <ArrowUpRight /></a></Button>
-            <Button variant="outline" className={anchorButton} asChild><a href={site.contact.whatsapp} target="_blank" rel="noreferrer"><MessageCircle className="text-whatsapp" /> Chat on WhatsApp</a></Button>
+          <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-7">
+            <Button className={anchorButton} asChild><a href={site.contact.bookingUrl}>Book a call <ArrowUpRight /></a></Button>
+            <a href="#work" className="text-link">See our work <ArrowRight /></a>
           </div>
-          <div className="mt-8 flex items-center gap-4 text-sm text-muted-foreground">
-            <div className="flex -space-x-2" aria-hidden="true"><span className="avatar-dot">R</span><span className="avatar-dot">i</span><span className="avatar-dot"><Sparkles /></span></div>
-            <span>No sales pitch. Just a useful conversation.</span>
-          </div>
+          <dl className="mt-12 grid max-w-md grid-cols-3 gap-6 border-t border-border pt-6">
+            {site.hero.stats.map((stat) => <div key={stat.label} className="flex flex-col-reverse"><dt className="mt-1 text-sm text-muted-foreground">{stat.label}</dt><dd className="text-3xl font-semibold">{stat.value}</dd></div>)}
+          </dl>
         </div>
         <div className="reveal reveal-delay"><HeroVisual /></div>
-      </div>
-    </section>
-  );
-}
-
-function TechStrip() {
-  return (
-    <section className="border-y border-border bg-card py-6" aria-label="Technology stack">
-      <div className="site-container grid items-center gap-4 sm:grid-cols-[auto_minmax(0,1fr)] sm:gap-8">
-        <p className="shrink-0 text-xs font-semibold uppercase text-muted-foreground">Built with modern tools</p>
-        <div className="marquee-mask"><div className="marquee-track tech-marquee">
-          {[...site.tools, ...site.tools].map((tool, index) => <span key={`${tool}-${index}`}>{tool}</span>)}
-        </div></div>
       </div>
     </section>
   );
@@ -225,66 +206,7 @@ function ValueBanner() {
     <section className="site-container py-20 sm:py-28">
       <div className="dark-panel reveal grid gap-8 p-7 sm:p-10 lg:grid-cols-[1fr_.75fr] lg:items-end lg:p-14">
         <div><p className="eyebrow text-dark-muted">One connected team</p><h2 className="max-w-3xl text-3xl font-bold text-dark-foreground sm:text-5xl">Get a designer and engineer in one team, without hiring in-house.</h2></div>
-        <div className="lg:pl-8"><p className="leading-7 text-dark-muted">No handoffs between agencies. The person who designs your product builds it, so nothing gets lost and everything ships faster.</p><Button variant="secondary" className="mt-7 h-12 rounded-full px-6" asChild><a href="#pricing">See pricing & availability <ChevronRight /></a></Button></div>
-      </div>
-    </section>
-  );
-}
-
-function WorkSection() {
-  const scroller = useRef<HTMLDivElement>(null);
-  const move = (direction: number) => scroller.current?.scrollBy({ left: direction * Math.min(scroller.current.clientWidth * 0.82, 640), behavior: "smooth" });
-  return (
-    <section id="work" className="section-pad overflow-hidden scroll-mt-20">
-      <div className="site-container">
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-5">
-          <SectionHeading eyebrow="Selected projects" title="Explore our latest work" body="Websites, web apps and products built for real users." />
-          <div className="hidden gap-2 sm:flex">
-            <Button variant="outline" size="icon" className="carousel-arrow" onClick={() => move(-1)} aria-label="Previous project"><ArrowLeft /></Button>
-            <Button variant="outline" size="icon" className="carousel-arrow" onClick={() => move(1)} aria-label="Next project"><ArrowRight /></Button>
-          </div>
-        </div>
-        <div ref={scroller} className="work-scroller" tabIndex={0} aria-label="Project carousel">
-          {site.projects.map((project) => (
-            <article key={project.name} className="work-card group">
-              <div className={cn("work-visual", `work-${project.visual}`)}><MockScreen variant={project.visual} /></div>
-              <div className="p-5 sm:p-6">
-                <div className="mb-4 flex items-center justify-between gap-3">
-                  <span className="status-pill"><i className={project.status === "Live Now" ? "status-live" : "status-concept"} />{project.status}</span>
-                  <ArrowUpRight className="text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-                </div>
-                <h3 className="text-xl font-bold sm:text-2xl">{project.name}</h3>
-                <p className="mt-2 min-h-12 text-sm leading-6 text-muted-foreground">{project.description}</p>
-                {project.url && <Button variant="link" className="mt-3 h-auto p-0 font-semibold" asChild><a href={project.url} target="_blank" rel="noreferrer">View Product <ArrowUpRight /></a></Button>}
-              </div>
-            </article>
-          ))}
-        </div>
-        <div className="mt-5 flex gap-2 sm:hidden">
-          <Button variant="outline" size="icon" className="carousel-arrow" onClick={() => move(-1)} aria-label="Previous project"><ArrowLeft /></Button>
-          <Button variant="outline" size="icon" className="carousel-arrow" onClick={() => move(1)} aria-label="Next project"><ArrowRight /></Button>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-const processIcons = [MousePointer2, Code2, Send, BarChart3] as const;
-function ProcessSection() {
-  return (
-    <section id="process" className="section-pad scroll-mt-20 bg-card">
-      <div className="site-container">
-        <SectionHeading eyebrow="How we work" title="A faster way to design and build your product" body="Clear steps, weekly progress and one accountable team from first idea to what comes next." />
-        <div className="mt-12 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {site.process.map((step, index) => {
-            const Icon = processIcons[index] ?? MousePointer2;
-            return <article key={step.title} className="process-card reveal">
-              <div className="mb-12 flex items-center justify-between"><span className="eyebrow">Step 0{index + 1}</span><span className="icon-tile"><Icon /></span></div>
-              <div className="process-visual" aria-hidden="true"><span /><span /><span /><i /></div>
-              <h3 className="mt-7 text-2xl font-bold">{step.title}</h3><p className="mt-3 min-h-24 text-sm leading-6 text-muted-foreground">{step.text}</p><span className="timing-pill">{step.timing}</span>
-            </article>;
-          })}
-        </div>
+        <div className="lg:pl-8"><p className="leading-7 text-dark-muted">No handoffs between agencies. The person who designs your product builds it, so nothing gets lost and everything ships faster.</p><Button variant="secondary" className="mt-7 h-12 rounded-full px-6" asChild><a href="#contact">Book a call <ChevronRight /></a></Button></div>
       </div>
     </section>
   );
@@ -296,62 +218,10 @@ function BentoSection() {
       <article className="bento-card reveal">
         <div className="founder-avatar">R</div><div><p className="eyebrow">Your point of contact</p><h3 className="mt-2 text-2xl font-bold">Rajesh, Founder</h3><p className="mt-3 leading-7 text-muted-foreground">Engineer-led studio. You talk directly to the person building your product.</p></div>
       </article>
-      <article className="bento-card bento-accent reveal"><div><p className="eyebrow text-primary-foreground/70">Clear from day one</p><h3 className="mt-3 text-3xl font-bold text-primary-foreground">Simple pricing.<br />No surprises.</h3></div><Button variant="secondary" className="mt-10 w-fit rounded-full" asChild><a href="#pricing">See pricing <ArrowRight /></a></Button></article>
+      <article className="bento-card bento-accent reveal"><div><p className="eyebrow text-primary-foreground/70">Clear from day one</p><h3 className="mt-3 text-3xl font-bold text-primary-foreground">Clear scope.<br />No surprises.</h3></div><Button variant="secondary" className="mt-10 w-fit rounded-full" asChild><a href="#work">See our work <ArrowRight /></a></Button></article>
       <article className="bento-card bento-stat reveal md:col-span-2 lg:col-span-1"><div className="stat-rings" aria-hidden="true"><span /><span /><span /></div><div><h3 className="text-4xl font-bold sm:text-5xl">Weeks,<br />not months.</h3><p className="mt-4 text-muted-foreground">Most projects go live in 2–6 weeks.</p></div></article>
     </div></section>
   );
-}
-
-function ServiceVisual({ index }: { index: number }) {
-  const visual = ["ocean", "lime", "violet"][Math.floor(index / 2)] ?? "ocean";
-  return (
-    <div className={cn("service-visual", `service-visual-${index + 1}`)} aria-hidden="true">
-      {index % 2 === 0 ? <MockScreen variant={visual} /> : <div className="service-phone"><div className="service-phone-top" /><span /><span /><div className="service-phone-chart" /><span /></div>}
-      <div className="service-badge"><Sparkles /><span>Designed to ship</span></div>
-    </div>
-  );
-}
-
-function ServicesSection() {
-  return (
-    <section id="services" className="section-pad scroll-mt-20 bg-card">
-      <div className="site-container"><SectionHeading eyebrow="What we do" title="Services for teams that need to ship" body="From a first website to an evolving product, we bring design thinking and engineering execution together." />
-        <div className="mt-14 divide-y divide-border border-y border-border">
-          {site.services.map((service, index) => <article key={service.title} className="service-row grid items-center gap-10 py-14 lg:grid-cols-2 lg:gap-20 lg:py-24">
-            <div className={cn("max-w-xl", index % 2 === 1 && "lg:order-2")}><span className="service-number">/{String(index + 1).padStart(2, "0")}</span><h3 className="mt-6 text-3xl font-bold sm:text-4xl">{service.title}</h3><p className="mt-5 text-lg font-semibold leading-7">{service.lead}</p><p className="mt-3 leading-7 text-muted-foreground">{service.description}</p><Button variant="outline" className="mt-7 h-11 rounded-full px-5" asChild><a href="#contact">Get Started <ArrowUpRight /></a></Button></div>
-            <div className={cn(index % 2 === 1 && "lg:order-1")}><ServiceVisual index={index} /></div>
-          </article>)}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function GalleryTile({ item, index }: { item: (typeof site.gallery)[number]; index: number }) {
-  const visual = item.visual ?? "ocean";
-  return <article className={cn("gallery-tile", `gallery-${item.visual}`)} aria-label={item.title}>
-    {item.image ? <img src={item.image} alt={item.title} /> : <MockScreen variant={visual} compact />}
-    <span>{item.title}</span><small>0{(index % 8) + 1}</small>
-  </article>;
-}
-
-function GallerySection() {
-  const rowOne = site.gallery.slice(0, 8); const rowTwo = site.gallery.slice(8);
-  return <section className="section-pad overflow-hidden"><div className="site-container"><SectionHeading eyebrow="Interface studies" title="Explore some of our latest design work" /></div>
-    <div className="mt-12 grid gap-5">
-      <div className="marquee-mask"><div className="gallery-track">{[...rowOne, ...rowOne].map((item, index) => <GalleryTile key={`one-${index}`} item={item} index={index} />)}</div></div>
-      <div className="marquee-mask"><div className="gallery-track gallery-reverse">{[...rowTwo, ...rowTwo].map((item, index) => <GalleryTile key={`two-${index}`} item={item} index={index} />)}</div></div>
-    </div>
-  </section>;
-}
-
-function PricingSection() {
-  return <section id="pricing" className="section-pad scroll-mt-20 bg-card"><div className="site-container"><SectionHeading eyebrow="Ways to work together" title="Simple pricing. No surprises." body="Choose a focused launch or keep a senior product partner close every month." align="center" />
-    <div className="mt-12 grid gap-5 lg:grid-cols-3">{site.pricing.map((plan) => <article key={plan.name} className={cn("pricing-card reveal", plan.badge && "pricing-featured")}>
-      <div className="flex items-start justify-between gap-3"><div><p className="text-sm font-semibold text-muted-foreground">{plan.timing}</p><h3 className="mt-2 text-2xl font-bold">{plan.name}</h3></div>{plan.badge && <span className="popular-badge">{plan.badge}</span>}</div>
-      <p className="mt-8 text-3xl font-bold">{site.prices[plan.priceKey]}</p><div className="my-8 h-px bg-border" /><ul className="grid gap-4">{plan.features.map((feature) => <li key={feature} className="flex items-center gap-3 text-sm"><span className="check-icon"><Check /></span>{feature}</li>)}</ul><Button className="mt-9 h-12 w-full rounded-full" variant={plan.badge ? "default" : "outline"} asChild><a href="#contact">Book a call <ArrowUpRight /></a></Button>
-    </article>)}</div>
-  </div></section>;
 }
 
 const supportIcons = { wallet: WalletCards, zap: Zap, sparkles: Sparkles, sliders: SlidersHorizontal };
@@ -378,14 +248,14 @@ function ClosingBanner() {
 
 function ContactSection() {
   const [submitted, setSubmitted] = useState(false);
-  const [budget, setBudget] = useState(""); const [source, setSource] = useState(""); const [needs, setNeeds] = useState<string[]>([]); const [errors, setErrors] = useState<Record<string, string>>({});
+  const [timeline, setTimeline] = useState(""); const [source, setSource] = useState(""); const [needs, setNeeds] = useState<string[]>([]); const [errors, setErrors] = useState<Record<string, string>>({});
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); const form = new FormData(event.currentTarget); const nextErrors: Record<string, string> = {};
     const name = String(form.get("name") ?? "").trim(); const email = String(form.get("email") ?? "").trim(); const project = String(form.get("project") ?? "").trim();
     if (!name) nextErrors["name"] = "Please enter your full name."; else if (name.length > 100) nextErrors["name"] = "Please keep your name under 100 characters.";
     if (!email) nextErrors["email"] = "Please enter your email."; else if (!/^\S+@\S+\.\S+$/.test(email) || email.length > 255) nextErrors["email"] = "Please enter a valid email.";
     if (!project) nextErrors["project"] = "Tell us briefly what you are building."; else if (project.length > 500) nextErrors["project"] = "Please keep this under 500 characters.";
-    if (!budget) nextErrors["budget"] = "Please choose a budget range."; if (!source) nextErrors["source"] = "Please tell us how you found us.";
+    if (!timeline) nextErrors["timeline"] = "Please choose a timeline."; if (!source) nextErrors["source"] = "Please tell us how you found us.";
     setErrors(nextErrors); if (Object.keys(nextErrors).length === 0) setSubmitted(true);
   }
   const toggleNeed = (need: string) => setNeeds((current) => current.includes(need) ? current.filter((item) => item !== need) : [...current, need]);
@@ -395,7 +265,7 @@ function ContactSection() {
       <form onSubmit={submit} noValidate className="grid gap-5">
         <div className="grid gap-5 sm:grid-cols-2"><Field label="Full Name*" error={errors["name"]}><Input name="name" maxLength={100} placeholder="Your full name" aria-invalid={Boolean(errors["name"])} /></Field><Field label="Email*" error={errors["email"]}><Input name="email" type="email" maxLength={255} placeholder="you@company.com" aria-invalid={Boolean(errors["email"])} /></Field></div>
         <Field label="What are you building?*" error={errors["project"]}><textarea name="project" maxLength={500} rows={4} placeholder="A short description of your idea, product or business" aria-invalid={Boolean(errors["project"])} className="form-control min-h-28 resize-y" /></Field>
-        <div className="grid gap-5 sm:grid-cols-2"><Field label="Project budget*" error={errors["budget"]}><Select value={budget} onValueChange={setBudget}><SelectTrigger className="form-control"><SelectValue placeholder="Select a range" /></SelectTrigger><SelectContent>{site.form.budgets.map((option) => <SelectItem key={option} value={option}>{option}</SelectItem>)}</SelectContent></Select></Field><Field label="How did you find us?*" error={errors["source"]}><Select value={source} onValueChange={setSource}><SelectTrigger className="form-control"><SelectValue placeholder="Select one" /></SelectTrigger><SelectContent>{site.form.sources.map((option) => <SelectItem key={option} value={option}>{option}</SelectItem>)}</SelectContent></Select></Field></div>
+        <div className="grid gap-5 sm:grid-cols-2"><Field label="Ideal timeline*" error={errors["timeline"]}><Select value={timeline} onValueChange={setTimeline}><SelectTrigger className="form-control"><SelectValue placeholder="Select a range" /></SelectTrigger><SelectContent>{site.form.timelines.map((option) => <SelectItem key={option} value={option}>{option}</SelectItem>)}</SelectContent></Select></Field><Field label="How did you find us?*" error={errors["source"]}><Select value={source} onValueChange={setSource}><SelectTrigger className="form-control"><SelectValue placeholder="Select one" /></SelectTrigger><SelectContent>{site.form.sources.map((option) => <SelectItem key={option} value={option}>{option}</SelectItem>)}</SelectContent></Select></Field></div>
         <fieldset><legend className="mb-3 text-sm font-semibold">What do you need help with?</legend><div className="flex flex-wrap gap-2">{site.form.needs.map((need) => <Button key={need} type="button" variant={needs.includes(need) ? "default" : "outline"} className="h-10 rounded-full px-4" onClick={() => toggleNeed(need)} aria-pressed={needs.includes(need)}>{needs.includes(need) && <Check />}{need}</Button>)}</div></fieldset>
         <Button type="submit" className="mt-2 h-13 rounded-full px-7 sm:w-fit">Send enquiry <ArrowUpRight /></Button>
       </form>
@@ -416,5 +286,6 @@ function FooterColumn({ title, links }: { title: string; links: readonly { label
 }
 
 function Index() {
-  return <div className="min-h-screen bg-background text-foreground"><Header /><main><Hero /><TechStrip /><ValueBanner /><WorkSection /><ProcessSection /><BentoSection /><ServicesSection /><GallerySection /><PricingSection /><SupportSection /><FAQSection /><ClosingBanner /><ContactSection /></main><Footer /><Button className="floating-whatsapp" size="icon" asChild><a href={site.contact.whatsapp} target="_blank" rel="noreferrer" aria-label="Chat with Iterate Studio on WhatsApp"><MessageCircle /></a></Button></div>;
+  useSmoothScroll();
+  return <div className="min-h-screen bg-background text-foreground"><Header /><main><Hero /><ValueBanner /><WorkSection /><ProcessSection /><ServicesSection /><BentoSection /><SupportSection /><FAQSection /><ClosingBanner /><ContactSection /></main><Footer /><Button className="floating-whatsapp" size="icon" asChild><a href={site.contact.whatsapp} target="_blank" rel="noreferrer" aria-label="Chat with Iterate Studio on WhatsApp"><MessageCircle /></a></Button></div>;
 }
