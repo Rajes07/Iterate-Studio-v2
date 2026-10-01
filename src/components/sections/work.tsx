@@ -96,7 +96,15 @@ export function WorkSection() {
             return (
               <article key={project.slug} className="work-card group">
                 <div className="work-image">
-                  <img src={project.thumbnail} alt={`${project.name} preview`} width={800} height={500} loading="lazy" decoding="async" draggable={false} />
+                  {project.previewImages ? (
+                    <div className="work-image-pair">
+                      {project.previewImages.map((image) => (
+                        <img key={image.src} src={image.src} alt={image.alt} loading="lazy" decoding="async" draggable={false} />
+                      ))}
+                    </div>
+                  ) : (
+                    <img src={project.thumbnail} alt={`${project.name} preview`} width={800} height={500} loading="lazy" decoding="async" draggable={false} />
+                  )}
                   <span className="status-pill"><i className={external ? "status-live" : "status-concept"} />{external ? "Live ↗" : "Case study"}</span>
                 </div>
                 <div className="p-5 sm:p-6">

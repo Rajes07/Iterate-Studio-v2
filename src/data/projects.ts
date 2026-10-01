@@ -1,3 +1,8 @@
+import nextshoreHome from "@/assets/work/nextshore-home.jpg.asset.json";
+import nextshoreStory from "@/assets/work/nextshore-story.jpg.asset.json";
+import vanascapeMobile from "@/assets/work/vanascape-mobile.png.asset.json";
+import vanascapeWork from "@/assets/work/vanascape-work.jpg.asset.json";
+
 export type ProjectTheme = {
   primary: string;
   onPrimary: string;
@@ -25,6 +30,7 @@ export type Project = {
   category: string;
   tagline: string;
   thumbnail: string;
+  previewImages?: { src: string; alt: string }[];
   type: "external" | "internal";
   url?: string;
   content?: ProjectContent;
@@ -43,7 +49,11 @@ export const projects: Project[] = [
     name: "NextShore",
     category: "Website",
     tagline: "A live website designed and built by Iterate Studio.",
-    thumbnail: "/work/nextshore.webp",
+    thumbnail: nextshoreHome.url,
+    previewImages: [
+      { src: nextshoreHome.url, alt: "NextShore destination website home page" },
+      { src: nextshoreStory.url, alt: "NextShore journey story page" },
+    ],
     type: "external",
     url: "https://nextshore-six.vercel.app/",
   },
@@ -52,7 +62,11 @@ export const projects: Project[] = [
     name: "Vanascape Garden Studio",
     category: "Website",
     tagline: "A landscape and garden design studio website for homes across Tamil Nadu.",
-    thumbnail: "/work/vanascape-garden-studio.webp",
+    thumbnail: vanascapeWork.url,
+    previewImages: [
+      { src: vanascapeWork.url, alt: "Vanascape garden projects page" },
+      { src: vanascapeMobile.url, alt: "Vanascape garden studio mobile website" },
+    ],
     type: "external",
     url: "https://vanascape-garden-studio--mrajes466.replit.app/",
   },
