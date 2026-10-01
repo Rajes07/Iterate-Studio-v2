@@ -161,20 +161,23 @@ button, a, input, textarea { letter-spacing: 0; }
   .work-wheel-wrap,.work-dots{display:none}.work-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,18rem),1fr));gap:1.25rem;margin-top:2.5rem}
 }
 
-/* Animated menu button, built from the logo mark: two black bars + the blue dot */
-.menu-btn{display:grid;width:2.75rem;height:2.75rem;flex:none;place-items:center;border:1px solid var(--border);border-radius:50%;background:var(--card);transition:border-color .25s,transform .25s}
-.menu-btn:hover{border-color:var(--foreground);transform:scale(1.05)}.menu-btn:active{transform:scale(.95)}
-.menu-icon{position:relative;display:block;width:1.3rem;height:1.1rem}
-.menu-icon i{position:absolute;display:block;border-radius:99px;transition:transform .45s cubic-bezier(.65,0,.2,1),width .35s cubic-bezier(.65,0,.2,1),opacity .25s}
-.menu-icon i:nth-child(1){left:0;top:0;width:.8rem;height:.2rem;background:var(--foreground)}
-.menu-icon i:nth-child(2){left:0;top:.42rem;width:1.3rem;height:.2rem;background:var(--foreground)}
-.menu-icon i:nth-child(3){left:.8rem;top:.82rem;width:.3rem;height:.3rem;background:var(--primary);animation:menu-dot 2.4s ease-in-out infinite}
-.menu-btn:hover .menu-icon i:nth-child(1){width:1.3rem}
-.menu-btn:hover .menu-icon i:nth-child(3){transform:translateX(-.8rem);animation:none}
-.menu-btn[data-open="true"] .menu-icon i:nth-child(1){width:1.3rem;transform:translateY(.42rem) rotate(45deg)}
-.menu-btn[data-open="true"] .menu-icon i:nth-child(2){transform:rotate(-45deg)}
-.menu-btn[data-open="true"] .menu-icon i:nth-child(3){transform:scale(0);animation:none}
-@keyframes menu-dot{0%,100%{transform:translateY(0)}50%{transform:translateY(-.22rem)}}
+/* Header: logo mark starts on the left; on scroll the name appears and the mark moves right as the menu button */
+.wordmark{display:inline-block;justify-self:start;font-family:var(--font-display);font-size:var(--text-xl);font-weight:700;letter-spacing:-.02em;clip-path:inset(0 100% 0 0);opacity:0;transform:translateX(-10px);transition:clip-path .55s cubic-bezier(.65,0,.2,1) .2s,opacity .4s ease .2s,transform .55s cubic-bezier(.2,.8,.2,1) .2s;pointer-events:none}
+.wordmark span{color:var(--primary)}
+.wordmark[data-scrolled="true"]{clip-path:inset(0 0 0 0);opacity:1;transform:none;pointer-events:auto}
+.logo-btn{display:grid;width:2.75rem;height:2.75rem;flex:none;place-items:center;border:1px solid transparent;border-radius:50%;background:transparent;color:var(--foreground);transform:translateX(var(--fly,0));transition:transform .7s cubic-bezier(.65,0,.2,1),background-color .4s,border-color .4s,box-shadow .4s}
+.logo-btn[data-scrolled="true"]{transform:none;border-color:var(--border);background:var(--card);box-shadow:var(--shadow-soft)}
+.logo-btn:hover{border-color:var(--foreground)}
+.logo-mark{width:1.15rem;height:1.5rem;overflow:visible}
+.logo-btn[data-scrolled="false"] .logo-mark{width:1.3rem;height:1.65rem}
+.logo-mark g{transform-box:fill-box;transform-origin:center;transition:transform .45s cubic-bezier(.65,0,.2,1),opacity .3s}
+.lm-dot{transform-box:fill-box;transform-origin:center;transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.logo-btn:hover .lm-dot{transform:scale(1.25) translateX(-6%)}
+.logo-btn[data-scrolled="true"] .lm-dot{animation:lm-bob 2.6s ease-in-out infinite}
+.lm-x{opacity:0;transform:rotate(-90deg) scale(.5)}
+.logo-btn[data-open="true"] .lm-logo{opacity:0;transform:rotate(90deg) scale(.5)}
+.logo-btn[data-open="true"] .lm-x{opacity:1;transform:none}
+@keyframes lm-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-14%)}}
 .menu-link{animation:menu-in .55s cubic-bezier(.2,.8,.2,1) both}
 @keyframes menu-in{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){.menu-icon i:nth-child(3){animation:none}.menu-link{animation:none}}
+@media (prefers-reduced-motion:reduce){.logo-btn[data-scrolled="true"] .lm-dot{animation:none}.menu-link{animation:none}.logo-btn,.wordmark{transition-duration:.01ms!important}}
