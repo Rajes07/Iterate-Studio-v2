@@ -1,8 +1,3 @@
-import nextshoreHome from "@/assets/work/nextshore-home.jpg.asset.json";
-import nextshoreStory from "@/assets/work/nextshore-story.jpg.asset.json";
-import vanascapeMobile from "@/assets/work/vanascape-mobile.png.asset.json";
-import vanascapeWork from "@/assets/work/vanascape-work.jpg.asset.json";
-
 export type ProjectTheme = {
   primary: string;
   onPrimary: string;
@@ -30,7 +25,6 @@ export type Project = {
   category: string;
   tagline: string;
   thumbnail: string;
-  previewImages?: { src: string; alt: string }[];
   type: "external" | "internal";
   url?: string;
   content?: ProjectContent;
@@ -48,12 +42,8 @@ export const projects: Project[] = [
     slug: "nextshore",
     name: "NextShore",
     category: "Website",
-    tagline: "A live website designed and built by Iterate Studio.",
-    thumbnail: nextshoreHome.url,
-    previewImages: [
-      { src: nextshoreHome.url, alt: "NextShore destination website home page" },
-      { src: nextshoreStory.url, alt: "NextShore journey story page" },
-    ],
+    tagline: "A destination and study-abroad guidance website.",
+    thumbnail: "/work/nextshore.webp",
     type: "external",
     url: "https://nextshore-six.vercel.app/",
   },
@@ -61,12 +51,8 @@ export const projects: Project[] = [
     slug: "vanascape-garden-studio",
     name: "Vanascape Garden Studio",
     category: "Website",
-    tagline: "A landscape and garden design studio website for homes across Tamil Nadu.",
-    thumbnail: vanascapeWork.url,
-    previewImages: [
-      { src: vanascapeWork.url, alt: "Vanascape garden projects page" },
-      { src: vanascapeMobile.url, alt: "Vanascape garden studio mobile website" },
-    ],
+    tagline: "A garden design studio website for homes in Tamil Nadu.",
+    thumbnail: "/work/vanascape.webp",
     type: "external",
     url: "https://vanascape-garden-studio--mrajes466.replit.app/",
   },
@@ -74,7 +60,7 @@ export const projects: Project[] = [
     slug: "volt-ride",
     name: "Volt Ride",
     category: "Mobility app · Concept",
-    tagline: "Electric scooter rental by the minute across Chennai. Scan, ride, park.",
+    tagline: "Electric scooter rental by the minute. Scan, ride, park.",
     thumbnail: "/work/volt-ride.webp",
     type: "internal",
     content: {
@@ -116,7 +102,7 @@ export const projects: Project[] = [
     slug: "nomad-desk",
     name: "Nomad Desk",
     category: "Coworking · Concept",
-    tagline: "A Chennai coworking space with bookable desks, passes and a live floor plan.",
+    tagline: "A coworking space with bookable desks and a live floor plan.",
     thumbnail: "/work/nomad-desk.webp",
     type: "internal",
     content: {
@@ -158,7 +144,7 @@ export const projects: Project[] = [
     slug: "paw-and-co",
     name: "Paw & Co.",
     category: "Pet care · Concept",
-    tagline: "Grooming and daycare for dogs, with one-tap booking and WhatsApp updates.",
+    tagline: "Dog grooming and daycare with one-tap booking.",
     thumbnail: "/work/paw-and-co.webp",
     type: "internal",
     content: {
@@ -200,7 +186,7 @@ export const projects: Project[] = [
     slug: "smile-studio",
     name: "Smile Studio",
     category: "Healthcare · Concept",
-    tagline: "A calm dental clinic site with clear treatments and online appointment booking.",
+    tagline: "A calm dental clinic with online appointment booking.",
     thumbnail: "/work/smile-studio.webp",
     type: "internal",
     content: {
@@ -242,7 +228,7 @@ export const projects: Project[] = [
     slug: "tiffin-tales",
     name: "Tiffin Tales",
     category: "Food delivery · Concept",
-    tagline: "Home-cooked lunch subscriptions delivered at 1 PM, with a weekly menu and skip-anytime plans.",
+    tagline: "Home-cooked lunch subscriptions, delivered at 1 PM.",
     thumbnail: "/work/tiffin-tales.webp",
     type: "internal",
     content: {

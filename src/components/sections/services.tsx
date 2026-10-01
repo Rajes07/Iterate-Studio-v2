@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { site } from "@/content/site";
+import { ServiceVisual } from "@/components/visuals/service-visuals";
 import { gsap, NO_PREFERENCE, registerGsap } from "@/lib/motion";
 
 export function ServicesSection() {
@@ -44,7 +45,7 @@ export function ServicesSection() {
                   </div>
                   <a href="#contact" className="text-link w-fit">Get started <ArrowUpRight /></a>
                 </div>
-                <img src={service.image} alt="" width={800} height={500} loading="lazy" decoding="async" className="service-image" />
+                <ServiceVisual index={index} />
               </div>
             </article>
           ))}

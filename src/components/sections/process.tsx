@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { BarChart3, Code2, MousePointer2, PenTool } from "lucide-react";
 import { site } from "@/content/site";
 import { cn } from "@/lib/utils";
+import { ProcessVisual } from "@/components/visuals/process-visuals";
 import { gsap, NO_PREFERENCE, registerGsap, ScrollTrigger } from "@/lib/motion";
 
 const icons = [MousePointer2, PenTool, Code2, BarChart3] as const;
@@ -69,7 +70,7 @@ export function ProcessSection() {
                   <h3 className="mt-5 text-3xl font-semibold">{step.title}</h3>
                   <p className="mt-3 max-w-lg text-muted-foreground">{step.text}</p>
                   <ul className="mt-5 flex flex-wrap gap-2">{step.tools.map((tool) => <li key={tool} className="tool-chip">{tool}</li>)}</ul>
-                  <img src={step.image} alt="" width={800} height={500} loading="lazy" decoding="async" className="process-image" />
+                  <ProcessVisual index={i} />
                 </div>
               );
             })}
@@ -86,7 +87,7 @@ export function ProcessSection() {
                 <h3 className="mt-5 text-2xl font-semibold">{step.title}</h3>
                 <p className="mt-2 text-muted-foreground">{step.text}</p>
                 <ul className="mt-4 flex flex-wrap gap-2">{step.tools.map((tool) => <li key={tool} className="tool-chip">{tool}</li>)}</ul>
-                <img src={step.image} alt="" width={800} height={500} loading="lazy" decoding="async" className="process-image" />
+                <ProcessVisual index={i} />
               </li>
             );
           })}

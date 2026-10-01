@@ -15,12 +15,16 @@ export function registerGsap() {
   registered = true;
 }
 
+let lenisInstance: Lenis | null = null;
+export const getLenis = () => lenisInstance;
+
 /** Lenis smooth scroll, driven by the GSAP ticker so ScrollTrigger stays in sync. */
 export function useSmoothScroll() {
   useEffect(() => {
     registerGsap();
     if (window.matchMedia(REDUCED_MOTION).matches) return;
     const lenis = new Lenis({ anchors: { offset: -72 } });
+    lenisInstance = lenis;
     lenis.on("scroll", ScrollTrigger.update);
     const tick = (time: number) => lenis.raf(time * 1000);
     gsap.ticker.add(tick);
@@ -28,6 +32,7 @@ export function useSmoothScroll() {
     return () => {
       gsap.ticker.remove(tick);
       lenis.destroy();
+      lenisInstance = null;
     };
   }, []);
 }

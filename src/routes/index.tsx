@@ -5,7 +5,6 @@ import {
   ArrowUpRight,
   Check,
   ChevronRight,
-  CircleCheck,
   Menu,
   MessageCircle,
   Send,
@@ -44,6 +43,7 @@ import { cn } from "@/lib/utils";
 import { useSmoothScroll } from "@/lib/motion";
 import { ServicesSection } from "@/components/sections/services";
 import { ProcessSection } from "@/components/sections/process";
+import { HeroDevices } from "@/components/visuals/hero-devices";
 import { WorkSection } from "@/components/sections/work";
 
 export const Route = createFileRoute("/")({
@@ -78,52 +78,6 @@ function Logo({ dark = false }: { dark?: boolean }) {
     <a href="#top" className={cn("text-xl font-extrabold tracking-tight", dark && "text-dark-foreground")} aria-label="Iterate Studio home">
       iterate<span className="text-primary">.</span>
     </a>
-  );
-}
-
-function MockScreen({ variant = "ocean", compact = false }: { variant?: string; compact?: boolean }) {
-  return (
-    <div className={cn("mock-screen", `mock-${variant}`, compact && "mock-compact")} aria-hidden="true">
-      <div className="mock-topbar">
-        <span className="mock-dot" /><span className="mock-dot" /><span className="mock-dot" />
-        <span className="mock-url" />
-      </div>
-      <div className="mock-body">
-        <div className="mock-sidebar">
-          <span className="mock-logo" />
-          <span /><span /><span /><span />
-        </div>
-        <div className="mock-content">
-          <div className="mock-heading"><span /><i /></div>
-          <div className="mock-metrics"><span /><span /><span /></div>
-          <div className="mock-chart">
-            <div className="chart-line"><i /><i /><i /><i /><i /><i /></div>
-          </div>
-          <div className="mock-rows"><span /><span /><span /></div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function HeroVisual() {
-  return (
-    <div className="hero-visual" aria-label="Abstract product dashboard and mobile application preview">
-      <div className="hero-orbit hero-orbit-one" />
-      <div className="hero-orbit hero-orbit-two" />
-      <div className="hero-dashboard"><MockScreen variant="ocean" /></div>
-      <div className="hero-phone">
-        <div className="phone-speaker" />
-        <div className="phone-greeting"><span>Good morning</span><strong>Your progress</strong></div>
-        <div className="phone-score"><span>84</span><small>Weekly score</small></div>
-        <div className="phone-bars"><i /><i /><i /><i /><i /></div>
-        <div className="phone-card"><span /><span /><span /></div>
-      </div>
-      <div className="hero-float-card">
-        <CircleCheck />
-        <div><strong>Launch ready</strong><span>All systems are go</span></div>
-      </div>
-    </div>
   );
 }
 
@@ -195,7 +149,7 @@ function Hero() {
             {site.hero.stats.map((stat) => <div key={stat.label} className="flex flex-col-reverse"><dt className="mt-1 text-sm text-muted-foreground">{stat.label}</dt><dd className="text-3xl font-semibold">{stat.value}</dd></div>)}
           </dl>
         </div>
-        <div className="reveal reveal-delay"><HeroVisual /></div>
+        <div className="reveal reveal-delay"><HeroDevices /></div>
       </div>
     </section>
   );
