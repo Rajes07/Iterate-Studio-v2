@@ -24,10 +24,10 @@ export const site = {
     ],
   },
   process: [
-    { title: "Discover & Strategy", timing: "Week 1", text: "We align on goals, users and the one journey that matters most, then map it into a clickable prototype.", tools: ["Figma", "Claude", "Miro"] },
-    { title: "Design & Refine", timing: "Weeks 2–3", text: "Interfaces take shape in weekly reviews, so every screen is tested and polished before a line ships.", tools: ["Figma", "Claude", "Framer"] },
-    { title: "Build & Integrate", timing: "Weeks 3–6", text: "Design and engineering move together on a production stack, connected to the tools you already use.", tools: ["React", "Supabase", "Vercel"] },
-    { title: "Optimise & Grow", timing: "Every month", text: "We read the analytics, run experiments and ship improvements, so launch day is the start, not the end.", tools: ["Analytics", "Claude", "Supabase"] },
+    { title: "Discover & Strategy", timing: "Week 1", text: "We align on goals, users and the one journey that matters most, then map it into a clickable prototype." },
+    { title: "Design & Refine", timing: "Weeks 2–3", text: "Interfaces take shape in weekly reviews, so every screen is tested and polished before a line ships." },
+    { title: "Build & Integrate", timing: "Weeks 3–6", text: "Design and engineering move together on a production stack, connected to the tools you already use." },
+    { title: "Optimise & Grow", timing: "Every month", text: "We read the analytics, run experiments and ship improvements, so launch day is the start, not the end." },
   ],
   services: [
     { title: "Websites that win customers", lead: "Turn first-time visitors into booked calls.", description: "Strategy, design and development in one focused sprint. Fast to launch, sharp on every screen, built to grow with you." },
@@ -47,7 +47,6 @@ export const site = {
     { question: "How long does a project take?", answer: "Websites in 2–3 weeks, MVPs in 4–6 weeks, based on the scope we agree upfront." },
     { question: "How do you work with clients?", answer: "Fixed-scope projects or an ongoing monthly partnership. We agree the plan together after a free 30-minute call." },
     { question: "Do you handle both design and development?", answer: "Yes. Design and engineering happen in the same team, side by side, with no handoffs." },
-    { question: "What tech do you use?", answer: "React, TypeScript, Next.js, Supabase, Vercel and Figma." },
     { question: "Can you improve an existing product?", answer: "Yes. We audit what you have, then redesign or rebuild it step by step." },
     { question: "What happens after launch?", answer: "We keep improving it through a monthly improvement partnership, or hand it over with full documentation." },
     { question: "How do projects start?", answer: "Book a free call, share your idea, and receive a scope and timeline within 2 business days." },

@@ -70,7 +70,7 @@ button, a, input, textarea { letter-spacing: 0; }
 .footer{background:var(--dark);color:var(--dark-foreground)}.footer-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--dark-muted)}.footer-link{color:var(--dark-muted);font-size:.85rem;transition:color .2s}.footer-link:hover{color:var(--dark-foreground)}.floating-whatsapp{position:fixed;right:1rem;bottom:1rem;z-index:35;width:3.5rem;height:3.5rem;border-radius:50%;background:var(--whatsapp);color:var(--primary-foreground);box-shadow:0 14px 35px color-mix(in oklab,var(--whatsapp) 35%,transparent)}.floating-whatsapp:hover{background:color-mix(in oklab,var(--whatsapp) 86%,var(--foreground));transform:translateY(-3px)}
 /* Shared */
 .text-link{display:inline-flex;align-items:center;gap:.4rem;font-size:.95rem;font-weight:600;border-bottom:1px solid transparent;transition:border-color .2s,gap .2s}.text-link:hover{gap:.65rem;border-color:currentColor}.text-link svg{width:1rem;height:1rem}
-.timing-pill,.tool-chip,.status-pill{display:inline-flex;align-items:center;gap:.45rem;border:1px solid var(--border);border-radius:999px;background:var(--card);padding:.4rem .75rem;font-size:.75rem;font-weight:600;color:var(--foreground)}
+.timing-pill,.status-pill{display:inline-flex;align-items:center;gap:.45rem;border:1px solid var(--border);border-radius:999px;background:var(--card);padding:.4rem .75rem;font-size:.75rem;font-weight:600;color:var(--foreground)}
 .status-pill i{width:7px;height:7px;border-radius:50%;background:var(--primary)}.carousel-arrow{width:3rem;height:3rem;border-radius:50%}
 /* Services: sticky stacked cards */
 .service-number{font-size:.85rem;font-weight:700;color:var(--primary)}

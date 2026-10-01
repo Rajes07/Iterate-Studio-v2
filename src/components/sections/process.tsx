@@ -69,7 +69,6 @@ export function ProcessSection() {
                   <div className="flex items-center gap-3"><span className="icon-tile"><Icon /></span><span className="timing-pill">{step.timing}</span></div>
                   <h3 className="mt-5 text-3xl font-semibold">{step.title}</h3>
                   <p className="mt-3 max-w-lg text-muted-foreground">{step.text}</p>
-                  <ul className="mt-5 flex flex-wrap gap-2">{step.tools.map((tool) => <li key={tool} className="tool-chip">{tool}</li>)}</ul>
                   <ProcessVisual index={i} />
                 </div>
               );
@@ -86,7 +85,6 @@ export function ProcessSection() {
                 <div className="flex items-center justify-between"><span className="icon-tile"><Icon /></span><span className="eyebrow">Step 0{i + 1}</span></div>
                 <h3 className="mt-5 text-2xl font-semibold">{step.title}</h3>
                 <p className="mt-2 text-muted-foreground">{step.text}</p>
-                <ul className="mt-4 flex flex-wrap gap-2">{step.tools.map((tool) => <li key={tool} className="tool-chip">{tool}</li>)}</ul>
                 <ProcessVisual index={i} />
               </li>
             );
