@@ -23,16 +23,6 @@ export const site = {
       { value: "5.0", label: "Average rating" },
     ],
   },
-  projects: [
-    { name: "Ledgerly", slug: "fintech-dashboard", description: "A fintech dashboard that turns cash flow into one clear daily view.", image: "/work/fintech-dashboard.png", href: "#contact" },
-    { name: "Jotwise", slug: "ai-note-taker", description: "An AI note-taker app that turns meetings into action items.", image: "/work/ai-note-taker.png", href: "#contact" },
-    { name: "Wayfare", slug: "travel-booking", description: "A travel booking app that plans a whole trip in three taps.", image: "/work/travel-booking.png", href: "#contact" },
-    { name: "Hearthstone", slug: "real-estate", description: "A real-estate site that lets buyers shortlist homes with confidence.", image: "/work/real-estate.png", href: "#contact" },
-    { name: "Careloop", slug: "healthcare-portal", description: "A healthcare portal that makes appointments and records effortless.", image: "/work/healthcare-portal.png", href: "#contact" },
-    { name: "Thread & Co.", slug: "e-commerce", description: "An e-commerce store designed around a faster, calmer checkout.", image: "/work/e-commerce.png", href: "#contact" },
-    { name: "Pulsemetrics", slug: "saas-analytics", description: "A SaaS analytics suite that answers questions without a data team.", image: "/work/saas-analytics.png", href: "#contact" },
-    { name: "Routewise", slug: "logistics-tracker", description: "A logistics tracker that shows every shipment, live and on time.", image: "/work/logistics-tracker.png", href: "#contact" },
-  ],
   process: [
     { title: "Discover & Strategy", timing: "Week 1", text: "We align on goals, users and the one journey that matters most, then map it into a clickable prototype.", tools: ["Figma", "Claude", "Miro"], image: "/process/discover.png" },
     { title: "Design & Refine", timing: "Weeks 2–3", text: "Interfaces take shape in weekly reviews, so every screen is tested and polished before a line ships.", tools: ["Figma", "Claude", "Framer"], image: "/process/design.png" },

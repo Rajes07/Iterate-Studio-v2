@@ -1,6 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type MouseEvent } from "react";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
-import { site } from "@/content/site";
+import { Link } from "@tanstack/react-router";
+import { projects } from "@/data/projects";
 import { Button } from "@/components/ui/button";
 import { REDUCED_MOTION } from "@/lib/motion";
 
@@ -79,7 +80,7 @@ export function WorkSection() {
           <div className="section-heading">
             <p className="eyebrow">Latest work</p>
             <h2>Concepts we&apos;d love to build with you.</h2>
-            <p>Eight product ideas, from first sketch to polished interface. Drag to explore.</p>
+            <p>Live sites and concept case studies, from first sketch to polished interface. Drag to explore.</p>
           </div>
           <div className="hidden gap-2 sm:flex">
             <Button variant="outline" size="icon" className="carousel-arrow" onClick={() => move.current(-1)} aria-label="Previous project"><ArrowLeft /></Button>
@@ -89,19 +90,28 @@ export function WorkSection() {
       </div>
       <div ref={viewport} className="work-viewport" aria-label="Project carousel">
         <div ref={track} className="work-track">
-          {site.projects.map((project) => (
-            <article key={project.slug} className="work-card group">
-              <div className="work-image">
-                <img src={project.image} alt={`${project.name} concept preview`} width={800} height={500} loading="lazy" decoding="async" draggable={false} />
-                <span className="status-pill"><i className="status-concept" />Concept</span>
-              </div>
-              <div className="p-5 sm:p-6">
-                <h3 className="text-xl font-semibold sm:text-2xl">{project.name}</h3>
-                <p className="mt-2 min-h-12 text-sm text-muted-foreground">{project.description}</p>
-                <a href={project.href} draggable={false} onClick={(e) => { if (dragged.current) e.preventDefault(); }} className="text-link mt-4 w-fit">View <ArrowUpRight /></a>
-              </div>
-            </article>
-          ))}
+          {projects.map((project) => {
+            const external = project.type === "external";
+            const onClick = (e: MouseEvent<HTMLAnchorElement>) => { if (dragged.current) e.preventDefault(); };
+            return (
+              <article key={project.slug} className="work-card group">
+                <div className="work-image">
+                  <img src={project.thumbnail} alt={`${project.name} preview`} width={800} height={500} loading="lazy" decoding="async" draggable={false} />
+                  <span className="status-pill"><i className={external ? "status-live" : "status-concept"} />{external ? "Live ↗" : "Case study"}</span>
+                </div>
+                <div className="p-5 sm:p-6">
+                  <p className="eyebrow">{project.category}</p>
+                  <h3 className="mt-3 text-xl font-semibold sm:text-2xl">{project.name}</h3>
+                  <p className="mt-2 min-h-12 text-sm text-muted-foreground">{project.tagline}</p>
+                  {external ? (
+                    <a href={project.url} target="_blank" rel="noopener noreferrer" draggable={false} onClick={onClick} className="text-link mt-4 w-fit">Visit site <ArrowUpRight /></a>
+                  ) : (
+                    <Link to="/work/$slug" params={{ slug: project.slug }} draggable={false} onClick={onClick} className="text-link mt-4 w-fit">View case study <ArrowUpRight /></Link>
+                  )}
+                </div>
+              </article>
+            );
+          })}
         </div>
       </div>
       <div ref={cursor} className="drag-cursor" aria-hidden="true"><span>DRAG</span></div>
