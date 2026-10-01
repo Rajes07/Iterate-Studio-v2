@@ -160,3 +160,21 @@ button, a, input, textarea { letter-spacing: 0; }
 @media (prefers-reduced-motion:reduce){
   .work-wheel-wrap,.work-dots{display:none}.work-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,18rem),1fr));gap:1.25rem;margin-top:2.5rem}
 }
+
+/* Animated menu button, built from the logo mark: two black bars + the blue dot */
+.menu-btn{display:grid;width:2.75rem;height:2.75rem;flex:none;place-items:center;border:1px solid var(--border);border-radius:50%;background:var(--card);transition:border-color .25s,transform .25s}
+.menu-btn:hover{border-color:var(--foreground);transform:scale(1.05)}.menu-btn:active{transform:scale(.95)}
+.menu-icon{position:relative;display:block;width:1.3rem;height:1.1rem}
+.menu-icon i{position:absolute;display:block;border-radius:99px;transition:transform .45s cubic-bezier(.65,0,.2,1),width .35s cubic-bezier(.65,0,.2,1),opacity .25s}
+.menu-icon i:nth-child(1){left:0;top:0;width:.8rem;height:.2rem;background:var(--foreground)}
+.menu-icon i:nth-child(2){left:0;top:.42rem;width:1.3rem;height:.2rem;background:var(--foreground)}
+.menu-icon i:nth-child(3){left:.8rem;top:.82rem;width:.3rem;height:.3rem;background:var(--primary);animation:menu-dot 2.4s ease-in-out infinite}
+.menu-btn:hover .menu-icon i:nth-child(1){width:1.3rem}
+.menu-btn:hover .menu-icon i:nth-child(3){transform:translateX(-.8rem);animation:none}
+.menu-btn[data-open="true"] .menu-icon i:nth-child(1){width:1.3rem;transform:translateY(.42rem) rotate(45deg)}
+.menu-btn[data-open="true"] .menu-icon i:nth-child(2){transform:rotate(-45deg)}
+.menu-btn[data-open="true"] .menu-icon i:nth-child(3){transform:scale(0);animation:none}
+@keyframes menu-dot{0%,100%{transform:translateY(0)}50%{transform:translateY(-.22rem)}}
+.menu-link{animation:menu-in .55s cubic-bezier(.2,.8,.2,1) both}
+@keyframes menu-in{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.menu-icon i:nth-child(3){animation:none}.menu-link{animation:none}}

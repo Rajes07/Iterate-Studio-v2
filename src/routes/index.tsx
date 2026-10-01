@@ -5,7 +5,6 @@ import {
   ArrowUpRight,
   Check,
   ChevronRight,
-  Menu,
   MessageCircle,
   Send,
   SlidersHorizontal,
@@ -82,6 +81,7 @@ function Logo({ dark = false }: { dark?: boolean }) {
 }
 
 function Header() {
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <header className="site-header">
       <div className="site-container grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 py-3 sm:flex sm:justify-between">
@@ -95,9 +95,9 @@ function Header() {
           </Button>
           <Button className="h-11 rounded-full px-5" asChild><a href={site.contact.bookingUrl}>Book a free call</a></Button>
         </div>
-        <Sheet>
+        <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
           <SheetTrigger asChild>
-            <Button variant="outline" size="icon" className="h-11 w-11 shrink-0 rounded-full lg:hidden" aria-label="Open navigation"><Menu /></Button>
+            <button type="button" className="menu-btn lg:hidden" aria-label="Open navigation" data-open={menuOpen}><span className="menu-icon" aria-hidden="true"><i /><i /><i /></span></button>
           </SheetTrigger>
           <SheetContent className="w-[90%] max-w-sm rounded-l-[1.5rem] border-border bg-background p-7">
             <SheetHeader className="text-left">
@@ -107,7 +107,7 @@ function Header() {
             <nav className="mt-10 flex flex-col" aria-label="Mobile navigation">
               {site.nav.map((item, index) => (
                 <SheetClose key={item.href} asChild>
-                  <a href={item.href} className="flex items-center justify-between border-b border-border py-5 text-xl font-semibold">
+                  <a href={item.href} style={{ animationDelay: `${120 + index * 70}ms` }} className="menu-link flex items-center justify-between border-b border-border py-5 text-xl font-semibold">
                     <span>{item.label}</span><span className="text-xs text-muted-foreground">0{index + 1}</span>
                   </a>
                 </SheetClose>
