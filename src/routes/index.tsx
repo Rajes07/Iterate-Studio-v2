@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type FormEvent, type ReactNode } from "react";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -80,12 +80,42 @@ function Logo({ dark = false }: { dark?: boolean }) {
   );
 }
 
+/** The logo mark (dot, bar, blue dot) that doubles as the menu button, with an X for the open state. */
+function LogoMark() {
+  return (
+    <svg className="logo-mark" viewBox="337 280 406 520" aria-hidden="true">
+      <g className="lm-logo">
+        <rect x="337" y="280" width="133" height="120" rx="60" fill="currentColor" />
+        <rect x="337" y="440" width="133" height="360" rx="14" fill="currentColor" />
+        <circle className="lm-dot" cx="666" cy="543" r="77" fill="#4a5df0" />
+      </g>
+      <g className="lm-x"><path d="M360 380 L720 700 M720 380 L360 700" stroke="currentColor" strokeWidth="64" strokeLinecap="round" fill="none" /></g>
+    </svg>
+  );
+}
+
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [fly, setFly] = useState(0);
+  const bar = useRef<HTMLDivElement>(null);
+  const btn = useRef<HTMLButtonElement>(null);
+
+  // Scrolling reveals the "iterate" name and sends the logo mark to the right corner as the menu button.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    const measure = () => { if (bar.current && btn.current) setFly(btn.current.offsetLeft - bar.current.offsetLeft); };
+    onScroll(); measure();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", measure);
+    return () => { window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", measure); };
+  }, []);
+
   return (
     <header className="site-header">
-      <div className="site-container grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 py-3 sm:flex sm:justify-between">
-        <Logo />
+      <div ref={bar} className="site-container grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 py-3 sm:flex sm:justify-between">
+        <div className="hidden lg:block"><Logo /></div>
+        <a href="#top" className="wordmark lg:hidden" data-scrolled={scrolled} aria-label="Iterate Studio home">iterate<span>.</span></a>
         <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary navigation">
           {site.nav.map((item) => <a key={item.href} href={item.href} className="nav-link">{item.label}</a>)}
         </nav>
@@ -97,7 +127,7 @@ function Header() {
         </div>
         <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
           <SheetTrigger asChild>
-            <button type="button" className="menu-btn lg:hidden" aria-label="Open navigation" data-open={menuOpen}><span className="menu-icon" aria-hidden="true"><i /><i /><i /></span></button>
+            <button ref={btn} type="button" className="logo-btn lg:hidden" aria-label={menuOpen ? "Close navigation" : "Open navigation"} data-open={menuOpen} data-scrolled={scrolled} style={{ "--fly": `${-fly}px` } as CSSProperties}><LogoMark /></button>
           </SheetTrigger>
           <SheetContent className="w-[90%] max-w-sm rounded-l-[1.5rem] border-border bg-background p-7">
             <SheetHeader className="text-left">
