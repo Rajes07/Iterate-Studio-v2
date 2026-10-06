@@ -7,7 +7,7 @@ export const site = {
     { label: "FAQ", href: "#faq" },
   ],
   contact: {
-    email: "iterateStudio@gmail.com",
+    email: "iterateStudio@outlook.com",
     whatsapp: "https://wa.me/917358470999",
     phone: "+91 73584 70999",
     bookingUrl: "#contact",
