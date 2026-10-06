@@ -4,6 +4,9 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { projects, type Project } from "@/data/projects";
 import { Button } from "@/components/ui/button";
 import { gsap, getLenis, registerGsap, ScrollTrigger } from "@/lib/motion";
+import { videoFor } from "@/data/videos";
+import { AutoVideo } from "@/components/AutoVideo";
+import { DrawLine, Reveal, SplitHeading } from "@/components/motion";
 
 const N = projects.length;
 const clampP = gsap.utils.clamp(0, N - 1);
@@ -16,6 +19,7 @@ const WHEEL_ANGLE = 50; // degrees between cards on the mobile wheel
 function WorkCard({ project, onClick }: { project: Project; onClick?: (e: MouseEvent<HTMLAnchorElement>) => void }) {
   const external = project.type === "external";
   const { colors, ink, device } = project.card;
+  const video = videoFor(project.slug);
   const style = { "--c1": colors[0], "--c2": colors[1] } as CSSProperties;
   const body = (
     <>
@@ -23,16 +27,18 @@ function WorkCard({ project, onClick }: { project: Project; onClick?: (e: MouseE
       <h3 className="work-title">{project.name}</h3>
       <p className="work-tagline">{project.tagline}</p>
       <div className={`work-device ${device}`}>
-        <img src={project.thumbnail} alt={`${project.name} preview`} width={900} height={device === "phone" ? 1760 : 560} loading="lazy" decoding="async" draggable={false} />
+        {video
+          ? <AutoVideo sources={video} poster={project.thumbnail} alt={`${project.name} preview`} width={900} height={device === "phone" ? 1760 : 560} />
+          : <img src={project.thumbnail} alt={`${project.name} preview`} width={900} height={device === "phone" ? 1760 : 560} loading="lazy" decoding="async" draggable={false} />}
       </div>
       <span className="work-view">View {external ? "site" : "case study"} <ArrowRight /></span>
     </>
   );
   const cls = `work-card group ink-${ink}`;
   return external ? (
-    <a href={project.url} target="_blank" rel="noopener noreferrer" draggable={false} onClick={onClick} className={cls} style={style}>{body}</a>
+    <a href={project.url} target="_blank" rel="noopener noreferrer" draggable={false} onClick={onClick} className={cls} style={style} data-cursor="Live ↗">{body}</a>
   ) : (
-    <Link to="/work/$slug" params={{ slug: project.slug }} draggable={false} onClick={onClick} className={cls} style={style}>{body}</Link>
+    <Link to="/work/$slug" params={{ slug: project.slug }} draggable={false} onClick={onClick} className={cls} style={style} data-cursor="View">{body}</Link>
   );
 }
 
@@ -100,7 +106,8 @@ export function WorkSection() {
             z: -Math.min(a, 2) * 110,
             rotateY: -Math.sign(d) * 12 * side,
             scale: 1 - 0.15 * side,
-            opacity: a <= 1 ? 1 - 0.4 * a : Math.max(0, 0.6 - 0.49 * (a - 1)),
+            "--dim": 0.4 * side,
+            opacity: a <= 1 ? 1 : Math.max(0, 1 - 0.9 * (a - 1)),
             zIndex: Math.round(100 - a * 10),
             pointerEvents: a > 2.6 ? "none" : "auto",
           });
@@ -139,7 +146,13 @@ export function WorkSection() {
       if (pill && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
         const qx = gsap.quickTo(pill, "x", { duration: 0.35, ease: "power3" });
         const qy = gsap.quickTo(pill, "y", { duration: 0.35, ease: "power3" });
-        const mv = (e: PointerEvent) => { qx(e.clientX); qy(e.clientY); };
+        const label = pill.querySelector("span");
+        const mv = (e: PointerEvent) => {
+          qx(e.clientX); qy(e.clientY);
+          const card = (e.target as HTMLElement).closest<HTMLElement>("[data-cursor]");
+          const text = card?.dataset["cursor"] ?? "Drag";
+          if (label && label.textContent !== text) label.textContent = text;
+        };
         const en = () => gsap.to(pill, { opacity: 1, scale: 1, duration: 0.25 });
         const lv = () => gsap.to(pill, { opacity: 0, scale: 0.6, duration: 0.25 });
         el.addEventListener("pointermove", mv); el.addEventListener("pointerenter", en); el.addEventListener("pointerleave", lv);
@@ -188,9 +201,10 @@ export function WorkSection() {
       <div className="site-container">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-5">
           <div className="section-heading">
-            <p className="eyebrow">Latest work</p>
-            <h2>Built to be <em className="accent-italic">remembered.</em></h2>
-            <p>Live sites and concept case studies, from first sketch to polished interface.</p>
+            <DrawLine className="mb-8" />
+            <p className="eyebrow section-eyebrow">Latest work</p>
+            <SplitHeading>Built to be <em className="accent-italic">remembered.</em></SplitHeading>
+            <Reveal as="p" delay={0.2}>Live sites and concept case studies, from first sketch to polished interface.</Reveal>
           </div>
           <div className="work-arrows hidden gap-2 md:flex">
             <Button variant="outline" size="icon" className="carousel-arrow" onClick={() => goTo.current(current.current - 1)} aria-label="Previous project"><ArrowLeft /></Button>
@@ -220,7 +234,7 @@ export function WorkSection() {
         {projects.map((p) => <WorkCard key={p.slug} project={p} />)}
       </div>
 
-      <div ref={cursor} className="drag-cursor" aria-hidden="true"><span>DRAG</span></div>
+      <div ref={cursor} className="drag-cursor" aria-hidden="true"><span>Drag</span></div>
     </section>
   );
 }

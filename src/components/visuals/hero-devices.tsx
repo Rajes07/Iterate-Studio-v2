@@ -1,5 +1,4 @@
-import { useEffect, useRef } from "react";
-import { gsap, NO_PREFERENCE, registerGsap, ScrollTrigger } from "@/lib/motion";
+import { Parallax } from "@/components/motion";
 import "./visuals.css";
 
 function DashboardScreen() {
@@ -24,42 +23,25 @@ function DashboardScreen() {
   );
 }
 
-/** Laptop + two phones with a slow float and a light scroll parallax. */
+/** Laptop + two phones with a slow float and per-layer parallax depth. */
 export function HeroDevices() {
-  const root = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    registerGsap();
-    const mm = gsap.matchMedia();
-    mm.add(NO_PREFERENCE, () => {
-      gsap.utils.toArray<HTMLElement>("[data-depth]", root.current ?? undefined).forEach((el) => {
-        gsap.to(el, {
-          y: -Number(el.dataset["depth"]),
-          ease: "none",
-          scrollTrigger: { trigger: root.current, start: "top bottom", end: "bottom top", scrub: true },
-        });
-      });
-    });
-    return () => mm.revert();
-  }, []);
-
   return (
-    <div ref={root} className="hero-devices" role="img" aria-label="A laptop dashboard and two phones showing Iterate Studio website projects">
+    <div className="hero-devices" role="img" aria-label="A laptop dashboard and two phones showing Iterate Studio website projects">
       <div className="hd-glow" />
-      <div className="hd-layer hd-laptop" data-depth="26">
-        <div className="hd-float" style={{ animationDuration: "9s" }}>
+      <div className="hd-layer hd-laptop">
+        <Parallax speed={-0.1}><div className="hd-float" style={{ animationDuration: "9s" }}>
           <div className="v-laptop"><div className="v-laptop-screen"><DashboardScreen /></div><div className="v-laptop-base" /></div>
-        </div>
+        </div></Parallax>
       </div>
-      <div className="hd-layer hd-phone-a" data-depth="64">
-        <div className="hd-float" style={{ animationDuration: "7s", animationDelay: "-2s" }}>
+      <div className="hd-layer hd-phone-a">
+        <Parallax speed={-0.2}><div className="hd-float" style={{ animationDuration: "7s", animationDelay: "-2s" }}>
           <div className="v-phone"><img src="/work/nextshore.webp" alt="" width={900} height={1760} decoding="async" /></div>
-        </div>
+        </div></Parallax>
       </div>
-      <div className="hd-layer hd-phone-b" data-depth="-14">
-        <div className="hd-float" style={{ animationDuration: "8s", animationDelay: "-4s" }}>
+      <div className="hd-layer hd-phone-b">
+        <Parallax speed={0.12}><div className="hd-float" style={{ animationDuration: "8s", animationDelay: "-4s" }}>
           <div className="v-phone"><img src="/work/vanascape.webp" alt="" width={900} height={1485} decoding="async" /></div>
-        </div>
+        </div></Parallax>
       </div>
     </div>
   );

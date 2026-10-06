@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120" role="img" aria-label="iterate.">
+  <!-- Wordmark for the loader. Letters are separate <tspan>s so they can be staggered.
+       Text colour inherits currentColor; the dot uses the CSS accent variable (fallback #4F46E5). -->
+  <style>
+    .w { font: 700 96px/1 "Inter", "Satoshi", system-ui, sans-serif; letter-spacing: -0.04em; fill: currentColor; }
+    .dot { fill: var(--accent, #4F46E5); }
+  </style>
+  <text class="w" x="0" y="92">
+    <tspan id="l1">i</tspan><tspan id="l2">t</tspan><tspan id="l3">e</tspan><tspan id="l4">r</tspan><tspan id="l5">a</tspan><tspan id="l6">t</tspan><tspan id="l7">e</tspan>
+  </text>
+  <circle class="dot" id="logo-dot" cx="372" cy="82" r="11"/>
+</svg>

@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { CountUp } from "@/components/motion";
 import "./visuals.css";
 
 /** 01 · Discover: sticky-note board. */
@@ -51,7 +52,7 @@ function GrowVisual() {
   const bars = [22, 30, 28, 42, 50, 47, 64, 78, 92];
   return (
     <div className="vp vp-grow">
-      <div className="vp-kpi"><small>Conversion rate</small><b>6.4%</b><u>▲ 38% vs last month</u></div>
+      <div className="vp-kpi"><small>Conversion rate</small><b><CountUp value={6.4} decimals={1} suffix="%" /></b><u>▲ 38% vs last month</u></div>
       <div className="vp-bars">{bars.map((h, i) => <i key={i} style={{ height: `${h}%`, "--i": i } as CSSProperties} />)}</div>
       <svg className="vp-line" viewBox="0 0 300 100" preserveAspectRatio="none"><path d="M0 90 C40 84 50 70 80 72 S130 52 160 46 S220 30 250 18 S285 8 300 4" /></svg>
     </div>

@@ -1,95 +1,59 @@
 import { useEffect, useRef, useState } from "react";
-import { BarChart3, Code2, MousePointer2, PenTool } from "lucide-react";
 import { site } from "@/content/site";
 import { cn } from "@/lib/utils";
 import { ProcessVisual } from "@/components/visuals/process-visuals";
+import { DrawLine, Reveal, SplitHeading } from "@/components/motion";
 import { gsap, NO_PREFERENCE, registerGsap, ScrollTrigger } from "@/lib/motion";
 
-const icons = [MousePointer2, PenTool, Code2, BarChart3] as const;
 const steps = site.process;
 
+/** Sticky step counter + progress line on the left; four step cards on the right that light up as they pass the middle of the screen. */
 export function ProcessSection() {
-  const root = useRef<HTMLElement>(null);
-  const trigger = useRef<ScrollTrigger | null>(null);
+  const grid = useRef<HTMLDivElement>(null);
+  const fill = useRef<HTMLElement>(null);
   const [active, setActive] = useState(0);
 
-  // Desktop: pin the section and scrub through the four steps.
   useEffect(() => {
     registerGsap();
-    const mm = gsap.matchMedia();
-    mm.add(`(min-width: 1024px) and ${NO_PREFERENCE}`, () => {
-      trigger.current = ScrollTrigger.create({
-        trigger: root.current,
-        start: "top top+=72",
-        end: () => `+=${window.innerHeight * (steps.length - 1)}`,
-        pin: true,
-        scrub: true,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          gsap.set(".process-progress", { scaleY: self.progress });
-          setActive(Math.min(steps.length - 1, Math.round(self.progress * (steps.length - 1))));
-        },
-      });
-      return () => { trigger.current = null; };
+    const triggers: ScrollTrigger[] = [];
+    const cards = gsap.utils.toArray<HTMLElement>(".pstep", grid.current ?? undefined);
+    cards.forEach((card, i) => {
+      triggers.push(ScrollTrigger.create({ trigger: card, start: "top 55%", end: "bottom 55%", onToggle: (self) => { if (self.isActive) setActive(i); } }));
     });
-    return () => mm.revert();
+    const mm = gsap.matchMedia();
+    mm.add(NO_PREFERENCE, () => {
+      gsap.fromTo(fill.current, { scaleY: 0 }, { scaleY: 1, ease: "none", scrollTrigger: { trigger: grid.current, start: "top 55%", end: "bottom 55%", scrub: 1 } });
+    });
+    return () => { triggers.forEach((t) => t.kill()); mm.revert(); };
   }, []);
 
-  const select = (index: number) => {
-    setActive(index);
-    const st = trigger.current;
-    if (st) window.scrollTo({ top: st.start + (index / (steps.length - 1)) * (st.end - st.start) });
-  };
-
   return (
-    <section id="process" ref={root} className="process-section scroll-mt-20 bg-card">
-      <div className="site-container py-16 lg:py-14">
+    <section id="process" className="process-section section-pad scroll-mt-20 bg-card">
+      <div className="site-container">
         <div className="section-heading">
-          <p className="eyebrow">How we work</p>
-          <h2>From first call to measurable growth.</h2>
+          <DrawLine className="mb-8" />
+          <p className="eyebrow section-eyebrow">How we work</p>
+          <SplitHeading>From first call to <em className="accent-italic">measurable</em> growth.</SplitHeading>
         </div>
 
-        {/* Desktop: step tabs + pinned panel */}
-        <div className="mt-10 hidden gap-12 lg:grid lg:grid-cols-[.8fr_1.2fr]">
-          <div className="relative grid content-start gap-1 pl-6" role="tablist" aria-label="Process steps">
-            <span className="absolute bottom-0 left-0 top-0 w-px bg-border" />
-            <span className="process-progress absolute left-0 top-0 h-full w-px origin-top bg-primary" />
+        <div ref={grid} className="process-grid">
+          <div className="process-sticky" aria-hidden="true">
+            <div className="process-track"><b ref={fill} /></div>
+            <div className="process-bignum">0{active + 1}</div>
+          </div>
+          <ol className="grid gap-6">
             {steps.map((step, i) => (
-              <button key={step.title} role="tab" aria-selected={active === i} onClick={() => select(i)} className={cn("process-tab", active === i && "is-active")}>
-                <span className="text-sm">0{i + 1}</span>
-                <span className="text-2xl font-semibold">{step.title}</span>
-              </button>
-            ))}
-          </div>
-          <div className="process-stage">
-            {steps.map((step, i) => {
-              const Icon = icons[i] ?? MousePointer2;
-              return (
-                <div key={step.title} role="tabpanel" aria-hidden={active !== i} className={cn("process-panel", active === i && "is-active")}>
-                  <div className="flex items-center gap-3"><span className="icon-tile"><Icon /></span><span className="timing-pill">{step.timing}</span></div>
-                  <h3 className="mt-5 text-3xl font-semibold">{step.title}</h3>
-                  <p className="mt-3 max-w-lg text-muted-foreground">{step.text}</p>
+              <li key={step.title} className={cn("pstep", active === i && "is-active")} aria-current={active === i ? "step" : undefined}>
+                <Reveal as="div">
+                  <p className="pstep-label">Step 0{i + 1} · {step.timing}</p>
+                  <h3 className="mt-3 text-2xl font-semibold sm:text-3xl">{step.title}</h3>
+                  <p className="mt-3 max-w-xl text-muted-foreground">{step.text}</p>
                   <ProcessVisual index={i} />
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Mobile / tablet: vertical stacked list */}
-        <ol className="mt-10 grid gap-5 lg:hidden">
-          {steps.map((step, i) => {
-            const Icon = icons[i] ?? MousePointer2;
-            return (
-              <li key={step.title} className="process-panel is-static">
-                <div className="flex items-center justify-between"><span className="icon-tile"><Icon /></span><span className="eyebrow">Step 0{i + 1}</span></div>
-                <h3 className="mt-5 text-2xl font-semibold">{step.title}</h3>
-                <p className="mt-2 text-muted-foreground">{step.text}</p>
-                <ProcessVisual index={i} />
+                </Reveal>
               </li>
-            );
-          })}
-        </ol>
+            ))}
+          </ol>
+        </div>
       </div>
     </section>
   );

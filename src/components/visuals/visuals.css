@@ -107,17 +107,16 @@
 /* ---------- process visuals ---------- */
 .vp-wrap { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 1rem; margin-top: 1.5rem;
   background: radial-gradient(120% 90% at 85% 0%, color-mix(in oklab, var(--primary) 28%, var(--navy-2)), var(--navy) 70%); }
-.process-stage .vp-wrap { aspect-ratio: auto; height: 13rem; }
 .vp { position: absolute; inset: 0; padding: 1rem; color: #14224a; }
 /* swap-in: panels animate from "hidden" to their final pose when they become active */
-.process-stage .process-panel:not(.is-active) .vp * { transition: none !important; }
+.pstep:not(.is-active) .vp * { transition: none !important; }
 .vp-note { position: absolute; width: 27%; aspect-ratio: 1.1; padding: 8px; border-radius: 4px; box-shadow: 0 10px 20px rgb(0 0 0 / 30%); font-size: clamp(8px, 1vw, 11px); display: grid; align-content: start; gap: 5px;
   transform: rotate(var(--r, -2deg)); transition: transform .6s cubic-bezier(.2, .8, .2, 1) calc(var(--i) * 70ms), opacity .4s ease calc(var(--i) * 70ms); }
 .vp-note span { height: 4px; border-radius: 3px; background: rgb(20 34 74 / 22%); } .vp-note .s { width: 60%; }
 .vp-note.y { background: #ffe38a; } .vp-note.p { background: #ffb4c6; } .vp-note.g { background: #b8ecc5; } .vp-note.b { background: #b9d0ff; }
 .vp-board .vp-note:nth-child(1) { left: 6%; top: 10%; --r: -3deg; } .vp-board .vp-note:nth-child(2) { left: 36%; top: 6%; --r: 2deg; } .vp-board .vp-note:nth-child(3) { left: 66%; top: 12%; --r: -2deg; }
 .vp-board .vp-note:nth-child(4) { left: 10%; top: 54%; --r: 2deg; } .vp-board .vp-note:nth-child(5) { left: 40%; top: 52%; --r: -3deg; } .vp-board .vp-note:nth-child(6) { left: 68%; top: 56%; --r: 3deg; }
-.process-stage .process-panel:not(.is-active) .vp-note { opacity: 0; transform: translateY(18px) rotate(var(--r)) scale(.9); }
+.pstep:not(.is-active) .vp-note { opacity: 0; transform: translateY(18px) rotate(var(--r)) scale(.9); }
 .vp-link { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .5; } .vp-link path { stroke: var(--gold); stroke-width: 1.5; stroke-dasharray: 4 5; }
 
 .vp-canvas { background-image: radial-gradient(rgb(255 255 255 / 14%) 1px, transparent 1px); background-size: 16px 16px; }
@@ -125,19 +124,19 @@
 .vp-frame { position: absolute; display: grid; align-content: start; gap: 6px; border-radius: 8px; background: #fff; padding: 10px; box-shadow: 0 14px 28px rgb(0 0 0 / 35%); transition: transform .7s cubic-bezier(.2, .8, .2, 1), opacity .5s; }
 .vp-frame span { height: 5px; border-radius: 4px; background: #dfe2ee; } .vp-frame span.t { width: 55%; height: 9px; background: #14224a; } .vp-frame span.s { width: 70%; } .vp-frame u { height: 14px; width: 40%; border-radius: 99px; background: var(--primary); }
 .vp-frame.a { left: 16%; top: 14%; width: 38%; height: 70%; } .vp-frame.b { left: 58%; top: 26%; width: 28%; height: 56%; }
-.vp-sel { position: absolute; left: calc(16% - 4px); top: calc(14% - 4px); width: calc(38% + 8px); height: calc(70% + 8px); border: 1.5px solid #4f8bff; transition: opacity .4s ease .5s; }
+.vp-sel { position: absolute; left: calc(16% - 4px); top: calc(14% - 4px); width: calc(38% + 8px); height: calc(70% + 8px); border: 1.5px solid #4f8bff; transition: opacity .3s ease .4s, clip-path 1s var(--ease-out) .3s; clip-path: inset(0); }
 .vp-sel i { position: absolute; width: 7px; height: 7px; background: #fff; border: 1.5px solid #4f8bff; } .vp-sel i:nth-child(1) { left: -4px; top: -4px; } .vp-sel i:nth-child(2) { right: -4px; top: -4px; } .vp-sel i:nth-child(3) { left: -4px; bottom: -4px; } .vp-sel i:nth-child(4) { right: -4px; bottom: -4px; }
 .vp-sel b { position: absolute; left: -1.5px; top: -22px; border-radius: 4px 4px 4px 0; background: #4f8bff; color: #fff; padding: 2px 6px; font-size: 9px; font-weight: 600; white-space: nowrap; }
 .vp-cursor { position: absolute; left: 50%; top: 58%; border-radius: 0 8px 8px 8px; background: var(--gold); color: var(--navy); padding: 2px 8px; font-size: 9px; font-weight: 700; transition: transform .9s cubic-bezier(.2, .8, .2, 1) .3s; }
 .vp-swatches { position: absolute; right: 12px; bottom: 10px; display: flex; gap: 5px; } .vp-swatches i { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #fff; } .vp-swatches i:nth-child(1) { background: var(--primary); } .vp-swatches i:nth-child(2) { background: var(--gold); } .vp-swatches i:nth-child(3) { background: #14224a; } .vp-swatches i:nth-child(4) { background: #f7f4ee; }
-.process-stage .process-panel:not(.is-active) .vp-frame { opacity: 0; transform: translateY(20px); } .process-stage .process-panel:not(.is-active) .vp-sel { opacity: 0; } .process-stage .process-panel:not(.is-active) .vp-cursor { transform: translate(-90px, 40px); }
+.pstep:not(.is-active) .vp-frame { opacity: 0; transform: translateY(20px); } .pstep:not(.is-active) .vp-sel { opacity: 0; clip-path: inset(0 100% 100% 0); } .pstep:not(.is-active) .vp-cursor { transform: translate(-90px, 40px); }
 
 .vp-build { display: grid; grid-template-columns: 1.15fr 1fr; gap: 10px; }
 .vp-editor { border-radius: 8px; background: #0a1128; padding: 8px 10px; font-family: ui-monospace, "SF Mono", Menlo, monospace; color: #b9c4ff; box-shadow: 0 14px 28px rgb(0 0 0 / 35%); overflow: hidden; }
 .vp-tabs { display: flex; gap: 8px; margin-bottom: 6px; font-size: 8px; } .vp-tabs span { color: #6a7399; } .vp-tabs span.on { color: #fff; border-bottom: 1.5px solid var(--gold); }
-.vp-editor code { display: block; white-space: pre; font-size: clamp(7px, .85vw, 10px); line-height: 1.7; color: #b9c4ff; transition: transform .5s ease calc(var(--i) * 90ms), opacity .4s ease calc(var(--i) * 90ms); } .vp-editor s { display: inline-block; width: 14px; margin-right: 6px; color: #4b5580; text-decoration: none; }
-.process-stage .process-panel:not(.is-active) .vp-editor code { opacity: 0; transform: translateX(-10px); }
-.vp-preview { border-radius: 8px; background: #fff; overflow: hidden; box-shadow: 0 14px 28px rgb(0 0 0 / 35%); } .vp-preview-bar { display: flex; gap: 4px; padding: 6px 8px; background: #eef0f6; } .vp-preview-bar i { width: 6px; height: 6px; border-radius: 50%; background: #c9cddc; }
+.vp-editor code { display: block; white-space: pre; font-size: clamp(7px, .85vw, 10px); line-height: 1.7; color: #b9c4ff; transition: transform .5s ease calc(var(--i) * 120ms), opacity .4s ease calc(var(--i) * 120ms); } .vp-editor s { display: inline-block; width: 14px; margin-right: 6px; color: #4b5580; text-decoration: none; }
+.pstep:not(.is-active) .vp-editor code { opacity: 0; transform: translateX(-10px); } .pstep:not(.is-active) .vp-preview { opacity: 0; transform: translateY(10px); transition: none; }
+.vp-preview { transition: opacity .6s var(--ease-out) .9s, transform .6s var(--ease-out) .9s; border-radius: 8px; background: #fff; overflow: hidden; box-shadow: 0 14px 28px rgb(0 0 0 / 35%); } .vp-preview-bar { display: flex; gap: 4px; padding: 6px 8px; background: #eef0f6; } .vp-preview-bar i { width: 6px; height: 6px; border-radius: 50%; background: #c9cddc; }
 .vp-preview-body { padding: 14px 12px; background: linear-gradient(160deg, #1c3a2c, #0e2218); height: 100%; color: #fff; } .vp-preview-body h4 { font-family: var(--serif) !important; font-weight: 500; font-size: clamp(11px, 1.5vw, 17px); line-height: 1.05; } .vp-preview-body em { color: var(--gold); }
 .vp-preview-body span { display: block; width: 70%; height: 4px; margin: 8px 0; border-radius: 3px; background: #ffffff40; } .vp-preview-body u { display: inline-block; text-decoration: none; border-radius: 99px; background: var(--gold); color: #14224a; padding: 3px 9px; font-size: 8px; font-weight: 700; }
 
@@ -146,8 +145,24 @@
 .vp-bars { position: relative; display: flex; align-items: end; gap: 6px; height: 62%; }
 .vp-bars i { flex: 1; transform-origin: bottom; border-radius: 5px 5px 0 0; background: linear-gradient(180deg, color-mix(in oklab, var(--primary) 85%, #fff), color-mix(in oklab, var(--primary) 40%, transparent)); transition: transform .8s cubic-bezier(.2, .8, .2, 1) calc(var(--i) * 70ms); }
 .vp-bars i:last-child { background: linear-gradient(180deg, var(--gold), color-mix(in oklab, var(--gold) 40%, transparent)); }
-.process-stage .process-panel:not(.is-active) .vp-bars i { transform: scaleY(.05); }
+.pstep:not(.is-active) .vp-bars i { transform: scaleY(.05); }
 .vp-line { position: absolute; left: 16px; right: 16px; bottom: 1rem; height: 62%; width: calc(100% - 32px); } .vp-line path { fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-dasharray: 420; stroke-dashoffset: 0; transition: stroke-dashoffset 1.2s ease .3s; }
-.process-stage .process-panel:not(.is-active) .vp-line path { stroke-dashoffset: 420; }
+.pstep:not(.is-active) .vp-line path { stroke-dashoffset: 420; }
 
 @media (prefers-reduced-motion: reduce) { .hd-float { animation: none; } }
+
+/* ---------- service mini-UIs: play once when the card is in view (.is-in is added by ServicesSection) ---------- */
+.v-split{container-type:inline-size}
+.v-board div{transition:transform .7s var(--ease-out),opacity .6s var(--ease-out)}
+.v-board div:nth-child(2){transition-delay:.12s}.v-board div:nth-child(3){transition-delay:.24s}
+.js .service-card:not(.is-in) .v-board div{opacity:0;transform:translateX(26px)}
+.v-split-half.polished{transition:clip-path 1.4s var(--ease-in-out) .3s}
+.v-split-handle{transition:transform 1.4s var(--ease-in-out) .3s}
+.js .service-card:not(.is-in) .v-split-half.polished{clip-path:inset(0 0 0 100%)}
+.js .service-card:not(.is-in) .v-split-handle{transform:translateX(calc(-50% + 50cqw))}
+.v-msg,.v-chat-input,.v-msg li{transition:opacity .5s var(--ease-out),transform .5s var(--ease-out)}
+.v-msg.user{transition-delay:.15s}.v-msg.bot{transition-delay:.5s}.v-msg li:nth-child(1){transition-delay:.9s}.v-msg li:nth-child(2){transition-delay:1.15s}.v-msg li:nth-child(3){transition-delay:1.4s}.v-chat-input{transition-delay:1.7s}
+.js .service-card:not(.is-in) :is(.v-msg,.v-chat-input,.v-msg li){opacity:0;transform:translateY(12px)}
+.v-chip{transition:opacity .5s var(--ease-out) .6s,transform .5s var(--ease-out) .6s}.v-chip-b{transition-delay:.9s}
+.js .service-card:not(.is-in) .v-chip{opacity:0;transform:translateY(10px)}
+@media (prefers-reduced-motion:reduce){.js .service-card:not(.is-in) :is(.v-board div,.v-msg,.v-chat-input,.v-msg li,.v-chip){opacity:1;transform:none}.js .service-card:not(.is-in) .v-split-half.polished{clip-path:none}.js .service-card:not(.is-in) .v-split-handle{transform:translateX(-50%)}}

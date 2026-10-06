@@ -17,10 +17,11 @@ export const site = {
     title: "Design & Development Studio for Startups and Growing Businesses",
     description:
       "We turn ideas into websites, web apps and MVPs in weeks, then keep improving them every month with real user data.",
+    eyebrow: "Chennai, India · Est. 2025",
     stats: [
-      { value: "12+", label: "Projects shipped" },
-      { value: "8+", label: "Happy clients" },
-      { value: "5.0", label: "Average rating" },
+      { value: 12, decimals: 0, suffix: "+", label: "Projects shipped" },
+      { value: 8, decimals: 0, suffix: "+", label: "Happy clients" },
+      { value: 5, decimals: 1, suffix: "", label: "Average rating" },
     ],
   },
   process: [
