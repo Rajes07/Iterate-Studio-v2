@@ -41,6 +41,36 @@ const gallery = (slug: string, name: string, count: number): ProjectContent["gal
 
 export const projects: Project[] = [
   {
+    slug: "velan-steels",
+    name: "Velan Industries",
+    category: "Steel fabrication",
+    tagline: "SS & MS gates, railings and roofing, made to fit your site.",
+    thumbnail: "/work/velan-steels.webp",
+    card: { colors: ["#14233a", "#d9661f"], ink: "light", device: "laptop" },
+    type: "external",
+    url: "https://velansteels.vercel.app/",
+  },
+  {
+    slug: "illam-interiors",
+    name: "Illam Interiors",
+    category: "Interior design",
+    tagline: "Premium Chennai interiors: traditional craft, modern design.",
+    thumbnail: "/work/illam-interiors.webp",
+    card: { colors: ["#2a2420", "#a0683a"], ink: "light", device: "laptop" },
+    type: "external",
+    url: "https://illaminteriors.vercel.app/",
+  },
+  {
+    slug: "vanascape",
+    name: "Vanascape Gardens",
+    category: "Landscaping",
+    tagline: "Landscaping and gardens designed for Coimbatore homes.",
+    thumbnail: "/work/vanascape.webp",
+    card: { colors: ["#24432f", "#9bb07a"], ink: "light", device: "laptop" },
+    type: "external",
+    url: "https://vanascape-garden.vercel.app/",
+  },
+  {
     slug: "nextshore",
     name: "NextShore",
     category: "Website",
@@ -49,16 +79,6 @@ export const projects: Project[] = [
     card: { colors: ["#0b1f3a", "#b08a3c"], ink: "light", device: "phone" },
     type: "external",
     url: "https://nextshore-six.vercel.app/",
-  },
-  {
-    slug: "vanascape-garden-studio",
-    name: "Vanascape Garden Studio",
-    category: "Website",
-    tagline: "A garden design studio website for homes in Tamil Nadu.",
-    thumbnail: "/work/vanascape.webp",
-    card: { colors: ["#24432f", "#9bb07a"], ink: "light", device: "phone" },
-    type: "external",
-    url: "https://vanascape-garden-studio--mrajes466.replit.app/",
   },
   {
     slug: "volt-ride",

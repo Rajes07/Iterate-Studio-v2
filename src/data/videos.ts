@@ -11,7 +11,7 @@ const files = new Set([
 export type VideoSources = { mp4?: string; webm?: string };
 
 /** Files that do not match the project slug. */
-const alias: Record<string, string> = { "vanascape-garden-studio": "vanascape" };
+const alias: Record<string, string> = { "velan-steels": "velan", "illam-interiors": "illam" };
 
 export function videoFor(slug: string): VideoSources | undefined {
   slug = alias[slug] ?? slug;

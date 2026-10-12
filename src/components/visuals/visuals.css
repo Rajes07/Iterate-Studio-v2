@@ -166,3 +166,5 @@
 .v-chip{transition:opacity .5s var(--ease-out) .6s,transform .5s var(--ease-out) .6s}.v-chip-b{transition-delay:.9s}
 .js .service-card:not(.is-in) .v-chip{opacity:0;transform:translateY(10px)}
 @media (prefers-reduced-motion:reduce){.js .service-card:not(.is-in) :is(.v-board div,.v-msg,.v-chat-input,.v-msg li,.v-chip){opacity:1;transform:none}.js .service-card:not(.is-in) .v-split-half.polished{clip-path:none}.js .service-card:not(.is-in) .v-split-handle{transform:translateX(-50%)}}
+
+.hd-screen{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top}
